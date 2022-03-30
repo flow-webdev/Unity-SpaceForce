@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     private int powerupCount = 0;
 
     // Boundaries
-    private float rightLeftTopBound = 12f;
+    private float rightLeftTopBound = 13f;
     private float bottomBound = 8.5f;
     private float heightBound = 10f;    
 
@@ -19,7 +19,8 @@ public class PlayerController : MonoBehaviour
     void Awake() {}
     // Called after awake immeditely before the first Update()
     void Start() {
-        projectilePool = FindObjectOfType<ProjectilePool>();        
+        projectilePool = FindObjectOfType<ProjectilePool>();
+        //moveForward = Find
     }
 
     // Call before rendering a frame
@@ -42,15 +43,15 @@ public class PlayerController : MonoBehaviour
         if(collision.gameObject.CompareTag("Asteroid")) {
             Destroy(collision.gameObject);
             Destroy(gameObject);
-            powerupCount = 0;
+            powerupCount = 0;            
         }
     }
 
     // On trigger when we want objects to pass through each other but register the collision
     // Will run or trigger the code in the method when a RigidBody enters the collider
     private void OnTriggerEnter(Collider other) {
-        
-        if(other.gameObject.CompareTag("Powerup")) {
+
+        if (other.gameObject.CompareTag("Powerup")) {
             Destroy(other.gameObject);
             powerupCount += 1;
         }
@@ -59,13 +60,13 @@ public class PlayerController : MonoBehaviour
     void MovePlayer() {
 
         // Moves Player based on arrow keys
-        float horizontalInput;
-        float forwardInput;
+        float horizontalInput = Input.GetAxis("Horizontal");        
+        float forwardInput = Input.GetAxis("Vertical");        
 
-        forwardInput = Input.GetAxis("Vertical");
-        transform.Translate(Vector3.forward * Time.deltaTime * speed * forwardInput);
+        if (transform.position.z >= -bottomBound && transform.position.z <= rightLeftTopBound) {
+            transform.Translate(Vector3.forward * Time.deltaTime * speed * forwardInput);            
+        }
 
-        horizontalInput = Input.GetAxis("Horizontal");
         transform.Translate(Vector3.right * Time.deltaTime * speed * horizontalInput);
     }
 
