@@ -10,9 +10,9 @@ public class PlayerController : MonoBehaviour
     private int powerupCount = 0;
 
     // Boundaries
-    private float rightLeftTopBound = 13f;
+    private float rightLeftBound = 13f;
     private float bottomBound = 8.5f;
-    private float heightBound = 10f;    
+    private float topBound = 12f;    
 
     // Called even if the script is not enable. It allows you to initialize setting for
     // an object before enabling the script component
@@ -61,10 +61,10 @@ public class PlayerController : MonoBehaviour
 
         // Moves Player based on arrow keys
         float horizontalInput = Input.GetAxis("Horizontal");        
-        float forwardInput = Input.GetAxis("Vertical");        
+        float forwardInput = Input.GetAxis("Vertical");
 
-        if (transform.position.z >= -bottomBound && transform.position.z <= rightLeftTopBound) {
-            transform.Translate(Vector3.forward * Time.deltaTime * speed * forwardInput);            
+        if (transform.position.z >= -bottomBound && transform.position.z <= topBound) {
+            transform.Translate(Vector3.forward * Time.deltaTime * speed * forwardInput);
         }
 
         transform.Translate(Vector3.right * Time.deltaTime * speed * horizontalInput);
@@ -72,25 +72,17 @@ public class PlayerController : MonoBehaviour
 
     void Boundaries() {
 
-        float transformPosX = transform.position.x;
-        float transformPosY = transform.position.y;
-        float transformPosZ = transform.position.z;
-
-        // Constrain player position on Z axis
-        if (transformPosZ < -bottomBound) {
-            transform.position = new Vector3(transformPosX, transformPosY, -bottomBound);
-        } else if (transformPosZ > rightLeftTopBound) {
-            transform.position = new Vector3(transformPosX, transformPosY, rightLeftTopBound);
+        //Constrain player position on Z axis
+        if (transform.position.z < -bottomBound) {
+            transform.position = new Vector3(transform.position.x, transform.position.y, -bottomBound);
+        } else if (transform.position.z > topBound) {
+            transform.position = new Vector3(transform.position.x, transform.position.y, topBound);
         }
         // Constrain player position on X axis
-        if (transformPosX < -rightLeftTopBound) {
-            transform.position = new Vector3(-rightLeftTopBound, transformPosY, transformPosZ);
-        } else if (transformPosX > rightLeftTopBound) {
-            transform.position = new Vector3(rightLeftTopBound, transformPosY, transformPosZ);
-        }
-        // Constrain player position on Y axis
-        if (transform.position.y < heightBound || transform.position.y > heightBound) {
-            transform.position = new Vector3(transform.position.x, heightBound, transform.position.z);
+        if (transform.position.x < -rightLeftBound) {
+            transform.position = new Vector3(-rightLeftBound, transform.position.y, transform.position.z);
+        } else if (transform.position.x > rightLeftBound) {
+            transform.position = new Vector3(rightLeftBound, transform.position.y, transform.position.z);
         }
     }
 
@@ -99,19 +91,19 @@ public class PlayerController : MonoBehaviour
         switch (powerupCount) {
 
             case 0:
-                GetPoolProjectile(gameObject.transform.position + new Vector3(0, 0, 2f));
+                GetPoolProjectile(gameObject.transform.position + new Vector3(0, -1, 2f));
                 break;
             case 1:
-                GetPoolProjectile(gameObject.transform.position + new Vector3(0, 0, 2f));
-                GetPoolProjectile(gameObject.transform.position + new Vector3(1, 0, 0.75f));
-                GetPoolProjectile(gameObject.transform.position + new Vector3(-1, 0, 0.75f));
+                GetPoolProjectile(gameObject.transform.position + new Vector3(0, -1, 2f));
+                GetPoolProjectile(gameObject.transform.position + new Vector3(1, -1, 0.75f));
+                GetPoolProjectile(gameObject.transform.position + new Vector3(-1, -1, 0.75f));
                 break;
             default:
-                GetPoolProjectile(gameObject.transform.position + new Vector3(0, 0, 2f));
-                GetPoolProjectile(gameObject.transform.position + new Vector3(1, 0, 0.75f));
-                GetPoolProjectile(gameObject.transform.position + new Vector3(-1, 0, 0.75f));
-                GetPoolProjectile(gameObject.transform.position + new Vector3(2, 0, 0.5f));
-                GetPoolProjectile(gameObject.transform.position + new Vector3(-2, 0, 0.5f));
+                GetPoolProjectile(gameObject.transform.position + new Vector3(0, -1, 2f));
+                GetPoolProjectile(gameObject.transform.position + new Vector3(1, -1, 0.75f));
+                GetPoolProjectile(gameObject.transform.position + new Vector3(-1, -1, 0.75f));
+                GetPoolProjectile(gameObject.transform.position + new Vector3(2, -1, 0.5f));
+                GetPoolProjectile(gameObject.transform.position + new Vector3(-2, -1, 0.5f));
                 break;
         }
     }

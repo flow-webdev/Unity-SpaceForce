@@ -32,8 +32,7 @@ public class Projectile : MonoBehaviour
         
     }
 
-    void OnTriggerEnter(Collider other) {
-        
+    void OnTriggerEnter(Collider other) {        
         // TO RETURN TO POOL
         if (other.gameObject.CompareTag("Asteroid")) {
             Destroy(other.gameObject);
