@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
     private ProjectilePool projectilePool;
     public float speed = 8f;
     private int powerupCount = 0;
+    public bool isAlive = true;
 
     // Boundaries
     private float rightLeftBound = 13f;
@@ -20,7 +21,6 @@ public class PlayerController : MonoBehaviour
     // Called after awake immeditely before the first Update()
     void Start() {
         projectilePool = FindObjectOfType<ProjectilePool>();
-        //moveForward = Find
     }
 
     // Call before rendering a frame
@@ -36,14 +36,19 @@ public class PlayerController : MonoBehaviour
         Boundaries();
     }
 
+    public void EliminatePlayer() {
+        gameObject.SetActive(false);
+    }
+
     // On collision when you try to do something with physics
     // Passes info about the collision to the method as an argument
     void OnCollisionEnter(Collision collision) {
         
         if(collision.gameObject.CompareTag("Asteroid")) {
             Destroy(collision.gameObject);
-            Destroy(gameObject);
-            powerupCount = 0;            
+            powerupCount = 0;
+            EliminatePlayer();
+            isAlive = false;
         }
     }
 
