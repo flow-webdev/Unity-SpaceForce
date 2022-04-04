@@ -5,7 +5,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     //private Rigidbody objectRb;
-    public float speed = 50f;
+    public float speed = 40f;
     private float offscreen = 30;
     private ProjectilePool projectilePool;
 
@@ -25,14 +25,14 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    void Movement() {
+    public virtual void Movement() {
        
         transform.Translate(Vector3.forward * speed * Time.deltaTime);
         //objectRb.AddForce(Vector3.forward.normalized * speed, ForceMode.Impulse);
         
     }
 
-    void OnTriggerEnter(Collider other) {        
+    public virtual void OnTriggerEnter(Collider other) {        
         // TO RETURN TO POOL
         if (other.gameObject.CompareTag("Asteroid")) {
             Destroy(other.gameObject);

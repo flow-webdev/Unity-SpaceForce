@@ -7,21 +7,25 @@ public class ShootAndRun : EnemyScript {
     private GameObject player;
     private GameObject placeholderLeft;
     private GameObject placeholderRight;
+    public GameObject enemyProjectile;
     private float startPos;
-    private float timeRemaining = 2;
+    private float timeRemaining = 3f;
+    private float initialXPos = 40f;
 
     void Start() {
+        // Did not declared playerController because is declared in the parent class
         playerController = GameObject.FindObjectOfType<PlayerController>(); // Keep parent reference, otherwise NullReferenceException
         player = GameObject.Find("Player");
         placeholderLeft = GameObject.Find("Placeholder Left");
         placeholderRight = GameObject.Find("Placeholder Right");
         startPos = gameObject.transform.position.x;
-        
+
+        InvokeRepeating("Shoot", 1f, 0.5f);
     }
 
-    //void Update() {
-    //    time = Time.deltaTime;
-    //}
+    void Update() {
+        GoesOffscreen();
+    }
 
     void FixedUpdate() {
         Movement();
@@ -32,31 +36,29 @@ public class ShootAndRun : EnemyScript {
         base.OnCollisionEnter(collision);           
     }
 
-    public override void Shoot() {}
+    public override void Shoot() {
+        float step = speed * Time.deltaTime;
+        Quaternion bulletRotation = Quaternion.Inverse(gameObject.transform.rotation);
+        Instantiate(enemyProjectile, gameObject.transform.position, gameObject.transform.rotation);
+    }
 
     public override void Movement() {
         // Player direction - enemy direction will give the exact direction (Vector) for the enemy to
         // follow in order to chase the player. Normalize will not let the enemy increase his force
         // with the speed (if use addForce to rigidBody);
-        
-        //Vector3 lookDirection = (player.transform.position - transform.position);
 
-        //if (startPos < -40 && gameObject.transform.position.x > -16) {
-        //    lookDirection = (placeholderLeft.transform.position - transform.position);
-            
-        //} else if (startPos > 40 && gameObject.transform.position.x < 16) {
-        //    lookDirection = (placeholderLeft.transform.position - transform.position);
-        //}
-
+        // Go toward the player for 2 seconds, then change direction and go offscreen
+        float step = speed * Time.deltaTime;
         if (timeRemaining > 0) {
             timeRemaining -= Time.deltaTime;
-            Vector3 lookDirection = (player.transform.position - transform.position);
-            transform.Translate(lookDirection * speed * Time.deltaTime);
-        } else if (timeRemaining < 0 && startPos < -40) {
-            Vector3 lookDirection = (placeholderLeft.transform.position - transform.position);
-            transform.Translate(lookDirection * speed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, player.transform.position, step);
+            transform.LookAt(player.transform);
+        } else if (timeRemaining < 0 && startPos < -initialXPos) {
+            transform.position = Vector3.MoveTowards(transform.position, placeholderLeft.transform.position, step);
+            transform.LookAt(player.transform);
+        } else if (timeRemaining < 0 && startPos > initialXPos) {
+            transform.position = Vector3.MoveTowards(transform.position, placeholderRight.transform.position, step);
+            transform.LookAt(player.transform);
         }
-
-        //transform.Translate(lookDirection * speed * Time.deltaTime);
     }
 }
