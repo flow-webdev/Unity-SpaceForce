@@ -15,11 +15,11 @@ public class Projectile : MonoBehaviour
         projectilePool = FindObjectOfType<ProjectilePool>();
     }
 
-    void Update() {
+    public virtual void Update() {
 
         Movement();
 
-        // Destroy/ return to pool offscreen projectile
+        // Destroy/return to pool offscreen projectile
         if (transform.position.z > offscreen) {
             ReturnToPool();
         }

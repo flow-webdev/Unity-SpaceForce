@@ -7,7 +7,9 @@ public class ShootAndRun : EnemyScript {
     private GameObject player;
     private GameObject placeholderLeft;
     private GameObject placeholderRight;
+
     public GameObject enemyProjectile;
+
     private float startPos;
     private float timeRemaining = 3f;
     private float initialXPos = 40f;
@@ -37,9 +39,9 @@ public class ShootAndRun : EnemyScript {
     }
 
     public override void Shoot() {
-        float step = speed * Time.deltaTime;
-        Quaternion bulletRotation = Quaternion.Inverse(gameObject.transform.rotation);
-        Instantiate(enemyProjectile, gameObject.transform.position, gameObject.transform.rotation);
+        if (playerController.isAlive) {
+            Instantiate(enemyProjectile, gameObject.transform.position + new Vector3(0, 2, 0), enemyProjectile.transform.rotation);
+        }            
     }
 
     public override void Movement() {

@@ -38,6 +38,8 @@ public class PlayerController : MonoBehaviour
 
     public void EliminatePlayer() {
         gameObject.SetActive(false);
+        isAlive = false;
+        //gameObject.GetComponent<BoxCollider>().enabled = false;
     }
 
     // On collision when you try to do something with physics
@@ -47,8 +49,7 @@ public class PlayerController : MonoBehaviour
         if(collision.gameObject.CompareTag("Asteroid")) {
             Destroy(collision.gameObject);
             powerupCount = 0;
-            EliminatePlayer();
-            isAlive = false;
+            EliminatePlayer();            
         }
     }
 

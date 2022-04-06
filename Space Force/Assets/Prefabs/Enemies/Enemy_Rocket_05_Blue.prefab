@@ -96,6 +96,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 30
+  player: {fileID: 0}
 --- !u!65 &3076654780139913622
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -107,5 +108,5 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2.5586102, y: 6.496175, z: 2.5586107}
-  m_Center: {x: -0.00000029802322, y: 0.970204, z: -0.00000014901161}
+  m_Size: {x: 2.5678961, y: 6.496175, z: 2.5429957}
+  m_Center: {x: 0.0046426062, y: 0.97020376, z: -0.093575895}
