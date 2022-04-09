@@ -11,8 +11,11 @@ public class ShootAndRun : EnemyScript {
     public GameObject enemyProjectile;
 
     private float startPos;
-    private float timeRemaining = 3f;
+    private float timeRemaining = 6f;
     private float initialXPos = 40f;
+
+    private float elapsedTime; // trascorso
+    private float timeLimit = 0.5f;
 
     void Start() {
         // Did not declared playerController because is declared in the parent class
@@ -21,8 +24,6 @@ public class ShootAndRun : EnemyScript {
         placeholderLeft = GameObject.Find("Placeholder Left");
         placeholderRight = GameObject.Find("Placeholder Right");
         startPos = gameObject.transform.position.x;
-
-        InvokeRepeating("Shoot", 1f, 0.5f);
     }
 
     void Update() {
@@ -39,26 +40,39 @@ public class ShootAndRun : EnemyScript {
     }
 
     public override void Shoot() {
+
         if (playerController.isAlive) {
-            Instantiate(enemyProjectile, gameObject.transform.position + new Vector3(0, 2, 0), enemyProjectile.transform.rotation);
-        }            
+            Instantiate(enemyProjectile, gameObject.transform.position + new Vector3(0, 0, 0), transform.rotation);
+        }
+    }
+
+    private IEnumerator Shooting() {
+        yield return new WaitForSeconds(1f);
+        Shoot();
     }
 
     public override void Movement() {
         // Player direction - enemy direction will give the exact direction (Vector) for the enemy to
         // follow in order to chase the player. Normalize will not let the enemy increase his force
         // with the speed (if use addForce to rigidBody);
-
-        // Go toward the player for 2 seconds, then change direction and go offscreen
+        
         float step = speed * Time.deltaTime;
-        if (timeRemaining > 0) {
+        if (timeRemaining > 3.5f ) { // Go toward the player for 3 seconds, then shoot and go offscreen
             timeRemaining -= Time.deltaTime;
             transform.position = Vector3.MoveTowards(transform.position, player.transform.position, step);
             transform.LookAt(player.transform);
-        } else if (timeRemaining < 0 && startPos < -initialXPos) {
+        } else if (timeRemaining < 3.5f && timeRemaining > 1) {
+            timeRemaining -= Time.deltaTime; // enemy movement time
+            elapsedTime += Time.deltaTime;   // shooting time
+            if (elapsedTime >= timeLimit) {
+                elapsedTime = 0;
+                transform.LookAt(player.transform);
+                Shoot();
+            }
+        } else if (timeRemaining < 1 && startPos < -initialXPos) {
             transform.position = Vector3.MoveTowards(transform.position, placeholderLeft.transform.position, step);
             transform.LookAt(player.transform);
-        } else if (timeRemaining < 0 && startPos > initialXPos) {
+        } else if (timeRemaining < 1 && startPos > initialXPos) {
             transform.position = Vector3.MoveTowards(transform.position, placeholderRight.transform.position, step);
             transform.LookAt(player.transform);
         }

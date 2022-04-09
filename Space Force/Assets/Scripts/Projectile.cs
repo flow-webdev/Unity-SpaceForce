@@ -10,7 +10,6 @@ public class Projectile : MonoBehaviour
     private ProjectilePool projectilePool;
 
     void Start() {
-
         //objectRb = GetComponent<Rigidbody>();
         projectilePool = FindObjectOfType<ProjectilePool>();
     }
