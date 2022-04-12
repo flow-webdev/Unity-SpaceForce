@@ -9,7 +9,8 @@ TagManager:
   - Projectile
   - Ground
   - Asteroid
-  - RunnerLeft
+  - EnemyProjectile
+  - Runner
   layers:
   - Default
   - TransparentFX

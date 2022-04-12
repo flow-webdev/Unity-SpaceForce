@@ -15,8 +15,8 @@ GameObject:
   - component: {fileID: 1511781456190422817}
   - component: {fileID: 1293399274227631655}
   m_Layer: 0
-  m_Name: Runner Left
-  m_TagString: RunnerLeft
+  m_Name: Runner
+  m_TagString: Runner
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -96,8 +96,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 3.1391964, y: 1.8558965, z: 4.3144474}
+  m_Center: {x: 0.08581925, y: -0.42794693, z: -0.07343315}
 --- !u!54 &1511781456190422817
 Rigidbody:
   m_ObjectHideFlags: 0

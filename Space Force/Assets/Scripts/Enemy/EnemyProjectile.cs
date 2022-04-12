@@ -6,13 +6,10 @@ public class EnemyProjectile : Projectile {
 
     public GameObject player;
     PlayerController playerController;
-    Vector3 lastPlayerPos;
 
     void Start() {
         player = GameObject.Find("Player");
         playerController = FindObjectOfType<PlayerController>();
-
-        lastPlayerPos = player.transform.position; //+ new Vector3(0,0,-20);
     }
 
     public override void Update() {

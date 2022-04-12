@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     public bool isAlive = true;
 
     // Boundaries
-    private float rightLeftBound = 13f;
+    private float rightLeftBound = 20f;
     private float bottomBound = 8.5f;
     private float topBound = 12f;    
 
@@ -69,6 +69,7 @@ public class PlayerController : MonoBehaviour
         float horizontalInput = Input.GetAxis("Horizontal");        
         float forwardInput = Input.GetAxis("Vertical");
 
+        // Deactivate forward move if out of bound
         if (transform.position.z >= -bottomBound && transform.position.z <= topBound) {
             transform.Translate(Vector3.forward * Time.deltaTime * speed * forwardInput);
         }

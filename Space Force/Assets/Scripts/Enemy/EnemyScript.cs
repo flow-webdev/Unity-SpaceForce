@@ -4,32 +4,30 @@ using UnityEngine;
 
 public abstract class EnemyScript : MonoBehaviour
 {
-    public PlayerController playerController;    
+    public PlayerController playerController;
+    public GameObject player;
     public float speed = 5;
     private float verticalOffscreen = 15f;
     private float horizontalOffscreen = 55f;
 
+    // Range -42 o 42, 10, 34
+
     void Start() {
 
-        playerController = GameObject.FindObjectOfType<PlayerController>();
+        playerController = GameObject.FindObjectOfType<PlayerController>();        
     }
 
-    void OnTriggerEnter(Collider other) {
+    void Update() {
+    }
+
+    protected void OnTriggerEnter(Collider other) {
 
         if(other.gameObject.CompareTag("Projectile")) {
             Destroy(gameObject);
         }
     }
 
-    public virtual void OnCollisionEnter(Collision collision) {
-
-        if (collision.gameObject.CompareTag("Player")) {
-            Destroy(gameObject);
-            playerController.EliminatePlayer();
-        }
-    }
-
-    public void GoesOffscreen() {
+    protected void GoesOffscreen() {
 
         if (gameObject.transform.position.z < -verticalOffscreen) {
             Destroy(gameObject);
@@ -38,7 +36,16 @@ public abstract class EnemyScript : MonoBehaviour
         }
     }
 
-    public abstract void Shoot();
 
-    public abstract void Movement();
+    protected virtual void OnCollisionEnter(Collision collision) {
+
+        if (collision.gameObject.CompareTag("Player")) {
+            Destroy(gameObject);
+            playerController.EliminatePlayer();
+        }
+    }
+
+    protected abstract void Shoot();
+
+    protected abstract void Movement();
 }
