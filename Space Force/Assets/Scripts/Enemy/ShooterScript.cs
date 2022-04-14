@@ -6,6 +6,8 @@ public class ShooterScript : EnemyScript {
 
     public GameObject enemyProjectile;
     private float timeRemaining = 6f;
+    private float elapsedTime; // trascorso
+    private float timeLimit = 0.9f;
 
     void Start() {
         playerController = GameObject.FindObjectOfType<PlayerController>();
@@ -40,6 +42,23 @@ public class ShooterScript : EnemyScript {
         if (timeRemaining > 3) {
             timeRemaining -= Time.deltaTime;
             transform.Translate(Vector3.forward * step);
+        
+        } else if (timeRemaining < 3 && timeRemaining > 0) {
+            timeRemaining -= Time.deltaTime;
+            ShootingTime();
+        
+        } else {
+            speed = 15;
+            transform.Translate(Vector3.forward * step);
+        }
+    }
+
+    private void ShootingTime() {
+        elapsedTime += Time.deltaTime;
+        if (elapsedTime > timeLimit) {
+            elapsedTime = 0;
+            transform.LookAt(player.transform);
+            Shoot();
         }
     }
 
