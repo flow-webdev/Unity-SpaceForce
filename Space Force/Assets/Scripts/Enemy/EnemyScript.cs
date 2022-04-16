@@ -6,6 +6,8 @@ public abstract class EnemyScript : MonoBehaviour
 {
     public PlayerController playerController;
     public GameObject player;
+    public GameObject baseExplosion;
+
     public float speed = 5;
     private float verticalOffscreen = 15f;
     private float horizontalOffscreen = 55f;
@@ -14,7 +16,7 @@ public abstract class EnemyScript : MonoBehaviour
 
     void Start() {
 
-        playerController = GameObject.FindObjectOfType<PlayerController>();        
+        playerController = GameObject.FindObjectOfType<PlayerController>();
     }
 
     void Update() {
@@ -24,6 +26,7 @@ public abstract class EnemyScript : MonoBehaviour
 
         if(other.gameObject.CompareTag("Projectile")) {
             Destroy(gameObject);
+            Instantiate(baseExplosion, transform.position, baseExplosion.transform.rotation);
         }
     }
 
@@ -41,6 +44,7 @@ public abstract class EnemyScript : MonoBehaviour
 
         if (collision.gameObject.CompareTag("Player")) {
             Destroy(gameObject);
+            Instantiate(baseExplosion, transform.position, baseExplosion.transform.rotation);
             playerController.EliminatePlayer();
         }
     }

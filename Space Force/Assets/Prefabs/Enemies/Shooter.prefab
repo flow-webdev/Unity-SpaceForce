@@ -128,6 +128,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerController: {fileID: 0}
   player: {fileID: 0}
+  baseExplosion: {fileID: 601290281227765993, guid: d57a08adb9cdbe94796b0af5d228b6b6, type: 3}
   speed: 5
   enemyProjectile: {fileID: 5232524285579110640, guid: 09ca932cec314994c870c526c87c5844, type: 3}
 --- !u!1001 &368966521471047976

@@ -55,7 +55,7 @@ public class ShooterScript : EnemyScript {
 
     private void ShootingTime() {
         elapsedTime += Time.deltaTime;
-        if (elapsedTime > timeLimit) {
+        if (elapsedTime >= timeLimit) {
             elapsedTime = 0;
             transform.LookAt(player.transform);
             Shoot();

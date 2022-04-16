@@ -6,6 +6,8 @@ public class PlayerController : MonoBehaviour
 {
     public GameObject projectile;
     private ProjectilePool projectilePool;
+    public GameObject baseExplosion;
+
     public float speed = 8f;
     private int powerupCount = 0;
     public bool isAlive = true;
@@ -39,6 +41,7 @@ public class PlayerController : MonoBehaviour
     public void EliminatePlayer() {
         gameObject.SetActive(false);
         isAlive = false;
+        Instantiate(baseExplosion, transform.position, baseExplosion.transform.rotation);
         //gameObject.GetComponent<BoxCollider>().enabled = false;
     }
 

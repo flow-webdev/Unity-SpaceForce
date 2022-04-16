@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Kamikazescript : EnemyScript {
+public class KamikazeScript : EnemyScript {
 
     public GameObject enemyProjectile;
     private float timeRemaining = 6f;
@@ -41,6 +41,10 @@ public class Kamikazescript : EnemyScript {
             timeRemaining -= Time.deltaTime;
             transform.Translate(Vector3.forward * step);
 
+        } else {
+            speed = 15;
+            transform.position = Vector3.MoveTowards(transform.position, player.transform.position, step);
+            transform.LookAt(player.transform);
         }
     }
 

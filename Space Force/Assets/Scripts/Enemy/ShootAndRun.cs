@@ -61,12 +61,7 @@ public class ShootAndRun : EnemyScript {
 
         } else if (timeRemaining < 3.5f && timeRemaining > 1) {
             timeRemaining -= Time.deltaTime; // enemy movement time
-            elapsedTime += Time.deltaTime;   // shooting time
-            if (elapsedTime >= timeLimit) {
-                elapsedTime = 0;
-                transform.LookAt(player.transform);
-                Shoot();
-            }
+            ShootingTime();
 
         } else if (timeRemaining < 1 && startPos < -initialXPos) {
             transform.position = Vector3.MoveTowards(transform.position, placeholderLeft.transform.position, step);
@@ -77,4 +72,14 @@ public class ShootAndRun : EnemyScript {
             transform.LookAt(player.transform);
         }
     }
+
+    private void ShootingTime() {
+        elapsedTime += Time.deltaTime;
+        if (elapsedTime >= timeLimit) {
+            elapsedTime = 0;
+            transform.LookAt(player.transform);
+            Shoot();
+        }
+    }
+
 }

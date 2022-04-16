@@ -98,6 +98,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectile: {fileID: 116582048069784659, guid: 5c84868b0c7a4c94fbd54881c6745564, type: 3}
+  baseExplosion: {fileID: 601290281227765993, guid: d57a08adb9cdbe94796b0af5d228b6b6, type: 3}
   speed: 10
   isAlive: 1
 --- !u!54 &885390798648843901
