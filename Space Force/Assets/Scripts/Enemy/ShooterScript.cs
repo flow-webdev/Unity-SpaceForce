@@ -5,13 +5,15 @@ using UnityEngine;
 public class ShooterScript : EnemyScript {
 
     public GameObject enemyProjectile;
+    private GameObject placeholderCenter;
     private float timeRemaining = 6f;
     private float elapsedTime; // trascorso
     private float timeLimit = 0.9f;
 
     void Start() {
-        playerController = GameObject.FindObjectOfType<PlayerController>();
         player = GameObject.Find("Player");
+        playerController = GameObject.FindObjectOfType<PlayerController>(true); // With true find GameObject active or inactive        
+        placeholderCenter = GameObject.Find("Placeholder Center");
         this.GetComponent<Rigidbody>().sleepThreshold = 0; // Without this, when not moving, trigger is not detected
     }
 
@@ -39,17 +41,23 @@ public class ShooterScript : EnemyScript {
 
         float step = speed * Time.deltaTime;
 
-        if (timeRemaining > 3) {
-            timeRemaining -= Time.deltaTime;
-            transform.Translate(Vector3.forward * step);
-        
-        } else if (timeRemaining < 3 && timeRemaining > 0) {
-            timeRemaining -= Time.deltaTime;
-            ShootingTime();
-        
-        } else {
+        if (playerController.isAlive) {
+            if (timeRemaining > 3) {
+                timeRemaining -= Time.deltaTime;
+                transform.Translate(Vector3.forward * step);
+
+            } else if (timeRemaining < 3 && timeRemaining > 0) {
+                timeRemaining -= Time.deltaTime;
+                ShootingTime();
+
+            } else {
+                speed = 15;
+                transform.Translate(Vector3.forward * step);
+            }
+        } else if (!playerController.isAlive) {
             speed = 15;
-            transform.Translate(Vector3.forward * step);
+            transform.position = Vector3.MoveTowards(transform.position, placeholderCenter.transform.position, step);
+            transform.LookAt(placeholderCenter.transform);
         }
     }
 

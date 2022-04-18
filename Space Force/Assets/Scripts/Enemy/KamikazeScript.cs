@@ -5,16 +5,20 @@ using UnityEngine;
 public class KamikazeScript : EnemyScript {
 
     public GameObject enemyProjectile;
+    private GameObject placeholderCenter;
     private float timeRemaining = 6f;
+    private bool alive = false;
 
     void Start() {
-        playerController = GameObject.FindObjectOfType<PlayerController>();
+
         player = GameObject.Find("Player");
-        this.GetComponent<Rigidbody>().sleepThreshold = 0; // Without this, when not moving, trigger is not detected
+        playerController = GameObject.FindObjectOfType<PlayerController>(true); // With true find GameObject active or inactive
+        placeholderCenter = GameObject.Find("Placeholder Center");
+        this.GetComponent<Rigidbody>().sleepThreshold = 0; // Without this, when not moving, trigger is not detected        
     }
 
     void Update() {
-        GoesOffscreen();
+        GoesOffscreen();        
     }
 
     void FixedUpdate() {
@@ -26,26 +30,29 @@ public class KamikazeScript : EnemyScript {
         base.OnCollisionEnter(collision);
     }
 
-    protected override void Shoot() {
-
-        if (playerController.isAlive) {
-            Instantiate(enemyProjectile, gameObject.transform.position, transform.rotation);
-        }
-    }
+    protected override void Shoot() {}
 
     protected override void Movement() {
 
         float step = speed * Time.deltaTime;
 
-        if (timeRemaining > 3) {
-            timeRemaining -= Time.deltaTime;
-            transform.Translate(Vector3.forward * step);
+        if (playerController.isAlive) {
+            if (timeRemaining > 3) {
+                timeRemaining -= Time.deltaTime;
+                transform.Translate(Vector3.forward * step);
 
-        } else {
+            } else {
+                speed = 15;
+                transform.position = Vector3.MoveTowards(transform.position, player.transform.position, step);
+                transform.LookAt(player.transform);
+            }
+        } else if (!playerController.isAlive) {
             speed = 15;
-            transform.position = Vector3.MoveTowards(transform.position, player.transform.position, step);
-            transform.LookAt(player.transform);
+            transform.position = Vector3.MoveTowards(transform.position, placeholderCenter.transform.position, step);
+            transform.LookAt(placeholderCenter.transform);
         }
+
+        
     }
 
 }
