@@ -4,13 +4,11 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    //private Rigidbody objectRb;
     public float speed = 40f;
     private float offscreen = 30;
     private ProjectilePool projectilePool;
 
     void Start() {
-        //objectRb = GetComponent<Rigidbody>();
         projectilePool = FindObjectOfType<ProjectilePool>();
     }
 
@@ -27,8 +25,7 @@ public class Projectile : MonoBehaviour
     public virtual void Movement() {
        
         transform.Translate(Vector3.forward * speed * Time.deltaTime);
-        //objectRb.AddForce(Vector3.forward.normalized * speed, ForceMode.Impulse);
-        
+        //objectRb.AddForce(Vector3.forward.normalized * speed, ForceMode.Impulse);        
     }
 
     public virtual void OnTriggerEnter(Collider other) {        

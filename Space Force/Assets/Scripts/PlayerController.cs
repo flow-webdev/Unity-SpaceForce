@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public GameObject projectile;
     private ProjectilePool projectilePool;
     public GameObject baseExplosion;
     public GameObject bombExplosion;
@@ -33,7 +32,7 @@ public class PlayerController : MonoBehaviour
             Shoot();
         }
 
-        if (Input.GetKeyDown(KeyCode.M)) {
+        if (Input.GetKeyDown(KeyCode.M)) { // Release bomb
             Instantiate(bombExplosion, transform.position, bombExplosion.transform.rotation);
             StartCoroutine(enemyExplosion());
             StartCoroutine(stopBombing());
@@ -108,7 +107,7 @@ public class PlayerController : MonoBehaviour
         switch (powerupCount) {
 
             case 0:
-                GetPoolProjectile(gameObject.transform.position + new Vector3(0, -1, 2f));
+                GetPoolProjectile(gameObject.transform.position + new Vector3(0, 0, 2f));
                 break;
             case 1:
                 GetPoolProjectile(gameObject.transform.position + new Vector3(0, -1, 2f));
@@ -133,15 +132,13 @@ public class PlayerController : MonoBehaviour
         return newProjectile;
     }
 
-    //private void Bomb() {
-    //    Instantiate(bombExplosion, transform.position, bombExplosion.transform.rotation);
-    //}
-
+    // Checked by enemy, if true they explode
     private IEnumerator enemyExplosion() {        
         yield return new WaitForSeconds(0.5f);
         isBombing = true;
     }
 
+    // After 1 sec from the previous, stop the enemies from exploding
     private IEnumerator stopBombing() {
         yield return new WaitForSeconds(0.6f);
         isBombing = false;

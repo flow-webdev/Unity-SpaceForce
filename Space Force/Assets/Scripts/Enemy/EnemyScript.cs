@@ -29,6 +29,7 @@ public abstract class EnemyScript : MonoBehaviour
 
     protected virtual void Update() {
         GoesOffscreen();
+
         if (playerController.isBombing) {
             Explode();
         }
