@@ -2,42 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShootAndRun : EnemyScript {
-    
-    private GameObject placeholderLeft;
-    private GameObject placeholderRight;
+public class ShootAndRun : EnemyScript {    
 
     public GameObject enemyProjectile;
 
     private float startPos;    
     private float initialXPos = 40f;
-
-    private float timeRemaining = 6f;
     private float elapsedTime; // trascorso
     private float timeLimit = 0.8f;
 
-    void Start() {
-        // Did not declared playerController and player because is declared in the parent class
-        playerController = GameObject.FindObjectOfType<PlayerController>(); // Keep parent reference, otherwise NullReferenceException
-        player = GameObject.Find("Player");
-        this.GetComponent<Rigidbody>().sleepThreshold = 0; // Without this, when not moving, trigger is not detected
-
-        placeholderLeft = GameObject.Find("Placeholder Left");
-        placeholderRight = GameObject.Find("Placeholder Right");
+    protected override void Start() {
+        base.Start();        
         startPos = gameObject.transform.position.x;
     }
 
-    void Update() {
-        GoesOffscreen();
+    protected override void Update() {
+        base.Update();
     }
 
-    void FixedUpdate() {
-        Movement();
-    }
-
-    // Need to override, otherwise is not able to call the method in PlayerController EliminatePlayer()
-    protected override void OnCollisionEnter(Collision collision) {
-        base.OnCollisionEnter(collision);           
+    protected override void FixedUpdate() {
+        base.FixedUpdate();
     }
 
     protected override void Shoot() {
@@ -54,23 +38,38 @@ public class ShootAndRun : EnemyScript {
         
         float step = speed * Time.deltaTime;
 
-        if (timeRemaining > 3.5f ) { // Go toward the player for 2.5 seconds, then shoot and go offscreen
-            timeRemaining -= Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, player.transform.position, step);
-            transform.LookAt(player.transform);
+        if (playerController.isAlive) {
 
-        } else if (timeRemaining < 3.5f && timeRemaining > 1) {
-            timeRemaining -= Time.deltaTime; // enemy movement time
-            ShootingTime();
+            if (timeRemaining > 3f) { // Go toward the player for 2.5 seconds, then shoot and go offscreen
+                timeRemaining -= Time.deltaTime;
+                transform.position = Vector3.MoveTowards(transform.position, player.transform.position, step);
+                transform.LookAt(player.transform);
 
-        } else if (timeRemaining < 1 && startPos < -initialXPos) {
-            transform.position = Vector3.MoveTowards(transform.position, placeholderLeft.transform.position, step);
-            transform.LookAt(player.transform);
+            } else if (timeRemaining < 3f && timeRemaining > 1) {
+                timeRemaining -= Time.deltaTime; // enemy movement time
+                ShootingTime();
 
-        } else if (timeRemaining < 1 && startPos > initialXPos) {
-            transform.position = Vector3.MoveTowards(transform.position, placeholderRight.transform.position, step);
-            transform.LookAt(player.transform);
+            } else if (timeRemaining < 1 && startPos < -initialXPos) {
+                transform.position = Vector3.MoveTowards(transform.position, placeholderLeft.transform.position, step);
+                transform.LookAt(player.transform);
+
+            } else if (timeRemaining < 1 && startPos > initialXPos) {
+                transform.position = Vector3.MoveTowards(transform.position, placeholderRight.transform.position, step);
+                transform.LookAt(player.transform);
+            }
+        } else {
+
+            if (startPos < -initialXPos) {
+                transform.position = Vector3.MoveTowards(transform.position, placeholderLeft.transform.position, step);
+                transform.LookAt(placeholderLeft.transform);
+
+            } else if (startPos > initialXPos) {
+                transform.position = Vector3.MoveTowards(transform.position, placeholderRight.transform.position, step);
+                transform.LookAt(placeholderRight.transform);
+            }
         }
+
+          
     }
 
     private void ShootingTime() {

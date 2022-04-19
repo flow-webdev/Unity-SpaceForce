@@ -7,6 +7,7 @@ public class SpawnManager : MonoBehaviour
     public GameObject[] asteroids;
     public GameObject powerUp;
     public GameObject[] enemy;
+    public GameObject runner;
     private Vector3[] enemySpawnCoordinates;
 
     int previousCoordinate = 0;
@@ -14,11 +15,14 @@ public class SpawnManager : MonoBehaviour
     private float spawnPosY = 10f;
     private float spawnPosZ = 25f;
 
-    private float startDelayAsteroid = 2f;
-    private float asteroidsRate = 3f;
+    private float startDelayEnemy = 2f;
+    private float enemyRate = 3f;
 
     private float startDelayPowerup = 15f;    
     private float powerupRate = 30f;
+
+    private float startDelayRunner = 15f;
+    private float runnerRate = 15f;
 
     void Start() {
 
@@ -26,7 +30,8 @@ public class SpawnManager : MonoBehaviour
 
         //InvokeRepeating("AsteroidsSpawn", startDelayAsteroid, asteroidsRate);
         InvokeRepeating("PowerUpSpawn", startDelayPowerup, powerupRate);
-        InvokeRepeating("EnemySpawn", startDelayAsteroid, asteroidsRate);
+        InvokeRepeating("EnemySpawn", startDelayEnemy, enemyRate);
+        InvokeRepeating("RunnerSpawn", startDelayRunner, runnerRate);
     }
 
     void AsteroidsSpawn() {
@@ -50,11 +55,9 @@ public class SpawnManager : MonoBehaviour
     void EnemySpawn() {
 
         int enemyIndex = Random.Range(0, enemy.Length);
-
-        //Debug.Log("Previous: " + previousCoordinate);        
+      
         int coordinatesIndex = ReturnCoordinates(previousCoordinate);
         previousCoordinate = coordinatesIndex;
-        //Debug.Log("Actual: " + coordinatesIndex);
 
         Instantiate(enemy[enemyIndex], enemySpawnCoordinates[coordinatesIndex], enemy[enemyIndex].gameObject.transform.rotation);
     }    
@@ -81,6 +84,17 @@ public class SpawnManager : MonoBehaviour
         }
 
         return coordinatesIndex;
+    }
+
+    void RunnerSpawn() {
+
+        Vector3[] points = new Vector3[2];
+        points[0] = new Vector3(-42, 10, 34);
+        points[1] = new Vector3(42, 10, 34);
+
+        int index = Random.Range(0, points.Length);
+
+        Instantiate(runner, points[index], runner.transform.rotation);
     }
 
     //Vector3 PowerUpRandomVector() {

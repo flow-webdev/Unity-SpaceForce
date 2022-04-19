@@ -7,10 +7,12 @@ public class PlayerController : MonoBehaviour
     public GameObject projectile;
     private ProjectilePool projectilePool;
     public GameObject baseExplosion;
+    public GameObject bombExplosion;
 
     public float speed = 8f;
     private int powerupCount = 0;
     public bool isAlive = true;
+    public bool isBombing;
 
     // Boundaries
     private float rightLeftBound = 20f;
@@ -30,6 +32,12 @@ public class PlayerController : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Space)) {
             Shoot();
         }
+
+        if (Input.GetKeyDown(KeyCode.M)) {
+            Instantiate(bombExplosion, transform.position, bombExplosion.transform.rotation);
+            StartCoroutine(enemyExplosion());
+            StartCoroutine(stopBombing());
+        }
     }
 
     // Call before perform any physics calculation (physics code goes here)
@@ -42,7 +50,6 @@ public class PlayerController : MonoBehaviour
         gameObject.SetActive(false);
         isAlive = false;
         Instantiate(baseExplosion, transform.position, baseExplosion.transform.rotation);
-        //gameObject.GetComponent<BoxCollider>().enabled = false;
     }
 
     // On collision when you try to do something with physics
@@ -125,29 +132,19 @@ public class PlayerController : MonoBehaviour
         newProjectile.transform.position = vectorPos;
         return newProjectile;
     }
+
+    //private void Bomb() {
+    //    Instantiate(bombExplosion, transform.position, bombExplosion.transform.rotation);
+    //}
+
+    private IEnumerator enemyExplosion() {        
+        yield return new WaitForSeconds(0.5f);
+        isBombing = true;
+    }
+
+    private IEnumerator stopBombing() {
+        yield return new WaitForSeconds(0.6f);
+        isBombing = false;
+    }
+
 }
-
-
-// SHOOT MADE WITH INSTANTIATION
-//void Shoot() {
-
-//    switch (powerupCount) {
-
-//        case 0:
-//            Instantiate(projectile, gameObject.transform.position + new Vector3(0, 0, 2f), projectile.transform.rotation);
-//            break;
-//        case 1:
-//            Instantiate(projectile, gameObject.transform.position + new Vector3(0, 0, 2f), projectile.transform.rotation);
-//            Instantiate(projectile, gameObject.transform.position + new Vector3(1, 0, 0.75f), projectile.transform.rotation);
-//            Instantiate(projectile, gameObject.transform.position + new Vector3(-1, 0, 0.75f), projectile.transform.rotation);
-//            break;
-//        default:
-//            Instantiate(projectile, gameObject.transform.position + new Vector3(0, 0, 2f), projectile.transform.rotation);
-//            Instantiate(projectile, gameObject.transform.position + new Vector3(1, 0, 0.75f), projectile.transform.rotation);
-//            Instantiate(projectile, gameObject.transform.position + new Vector3(-1, 0, 0.75f), projectile.transform.rotation);
-//            Instantiate(projectile, gameObject.transform.position + new Vector3(2, 0, 0.5f), projectile.transform.rotation);
-//            Instantiate(projectile, gameObject.transform.position + new Vector3(-2, 0, 0.5f), projectile.transform.rotation);
-//            break;
-//    }
-
-//}

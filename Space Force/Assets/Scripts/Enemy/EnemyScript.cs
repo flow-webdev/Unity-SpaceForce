@@ -8,25 +8,40 @@ public abstract class EnemyScript : MonoBehaviour
     public GameObject player;
     public GameObject baseExplosion;
 
-    public float speed = 5;
+    public GameObject placeholderLeft;
+    public GameObject placeholderRight;
+    public GameObject placeholderCenter;
+
     private float verticalOffscreen = 15f;
     private float horizontalOffscreen = 55f;
+    public float speed = 5;
+    public float timeRemaining = 6f;
 
-    // Range -42 o 42, 10, 34
+    protected virtual void Start() {
+        playerController = GameObject.FindObjectOfType<PlayerController>(true); // With true find GameObject active or inactive
+        player = GameObject.Find("Player");
+        this.GetComponent<Rigidbody>().sleepThreshold = 0; // Without this, when not moving, trigger is not detected
 
-    void Start() {
-
-        playerController = GameObject.FindObjectOfType<PlayerController>();
+        placeholderLeft = GameObject.Find("Placeholder Left");
+        placeholderRight = GameObject.Find("Placeholder Right");
+        placeholderCenter = GameObject.Find("Placeholder Center");
     }
 
-    void Update() {
+    protected virtual void Update() {
+        GoesOffscreen();
+        if (playerController.isBombing) {
+            Explode();
+        }
+    }
+
+    protected virtual void FixedUpdate() {
+        Movement();
     }
 
     protected void OnTriggerEnter(Collider other) {
 
         if(other.gameObject.CompareTag("Projectile")) {
-            Destroy(gameObject);
-            Instantiate(baseExplosion, transform.position, baseExplosion.transform.rotation);
+            Explode();
         }
     }
 
@@ -43,10 +58,14 @@ public abstract class EnemyScript : MonoBehaviour
     protected virtual void OnCollisionEnter(Collision collision) {
 
         if (collision.gameObject.CompareTag("Player")) {
-            Destroy(gameObject);
-            Instantiate(baseExplosion, transform.position, baseExplosion.transform.rotation);
+            Explode();
             playerController.EliminatePlayer();
         }
+    }
+
+    public void Explode() {
+        Destroy(gameObject);
+        Instantiate(baseExplosion, transform.position, baseExplosion.transform.rotation);
     }
 
     protected abstract void Shoot();

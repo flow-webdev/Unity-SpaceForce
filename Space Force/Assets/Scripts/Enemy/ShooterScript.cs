@@ -5,29 +5,19 @@ using UnityEngine;
 public class ShooterScript : EnemyScript {
 
     public GameObject enemyProjectile;
-    private GameObject placeholderCenter;
-    private float timeRemaining = 6f;
     private float elapsedTime; // trascorso
     private float timeLimit = 0.9f;
 
-    void Start() {
-        player = GameObject.Find("Player");
-        playerController = GameObject.FindObjectOfType<PlayerController>(true); // With true find GameObject active or inactive        
-        placeholderCenter = GameObject.Find("Placeholder Center");
-        this.GetComponent<Rigidbody>().sleepThreshold = 0; // Without this, when not moving, trigger is not detected
+    protected override void Start() {
+        base.Start();              
     }
 
-    void Update() {
-        GoesOffscreen();
+    protected override void Update() {
+        base.Update();
     }
 
-    void FixedUpdate() {
-        Movement();
-    }
-
-    // Need to override, otherwise is not able to call the method in PlayerController EliminatePlayer()
-    protected override void OnCollisionEnter(Collision collision) {
-        base.OnCollisionEnter(collision);
+    protected override void FixedUpdate() {
+        base.FixedUpdate();
     }
 
     protected override void Shoot() {
