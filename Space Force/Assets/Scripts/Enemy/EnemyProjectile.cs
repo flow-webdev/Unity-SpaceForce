@@ -18,8 +18,10 @@ public class EnemyProjectile : Projectile {
 
     public override void OnTriggerEnter(Collider other) {
 
-        if (other.gameObject.CompareTag("Player")) {
+        if (other.gameObject.CompareTag("Player") && !playerController.isShieldActive) {
             playerController.EliminatePlayer();
+            Destroy(gameObject);
+        } else if (other.gameObject.CompareTag("Player") && playerController.isShieldActive) {
             Destroy(gameObject);
         }
     }

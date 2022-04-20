@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class EnemyScript : MonoBehaviour
-{
+public abstract class EnemyScript : MonoBehaviour {
     public PlayerController playerController;
     public GameObject player;
     public GameObject baseExplosion;
@@ -41,7 +40,7 @@ public abstract class EnemyScript : MonoBehaviour
 
     protected void OnTriggerEnter(Collider other) {
 
-        if(other.gameObject.CompareTag("Projectile")) {
+        if (other.gameObject.CompareTag("Projectile")) {
             Explode();
         }
     }
@@ -58,9 +57,11 @@ public abstract class EnemyScript : MonoBehaviour
 
     protected virtual void OnCollisionEnter(Collision collision) {
 
-        if (collision.gameObject.CompareTag("Player")) {
+        if (collision.gameObject.CompareTag("Player") && !playerController.isShieldActive) {
             Explode();
             playerController.EliminatePlayer();
+        } else if (collision.gameObject.CompareTag("Player") && playerController.isShieldActive) {
+            Explode();
         }
     }
 

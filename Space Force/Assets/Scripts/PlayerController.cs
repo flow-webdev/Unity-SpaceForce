@@ -7,11 +7,18 @@ public class PlayerController : MonoBehaviour
     private ProjectilePool projectilePool;
     public GameObject baseExplosion;
     public GameObject bombExplosion;
+    public GameObject shield;
 
-    public float speed = 8f;
-    private int powerupCount = 0;
     public bool isAlive = true;
-    public bool isBombing;
+    public bool isBombing = false;
+    public bool isShieldActive = false;
+
+    // Powerup affected abilities
+    public float speed = 10f;
+    private int powerupCount = 0;
+    private int points = 0;
+    private int bombs = 3;
+    private int lifes = 3;
 
     // Boundaries
     private float rightLeftBound = 20f;
@@ -33,9 +40,7 @@ public class PlayerController : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.M)) { // Release bomb
-            Instantiate(bombExplosion, transform.position, bombExplosion.transform.rotation);
-            StartCoroutine(enemyExplosion());
-            StartCoroutine(stopBombing());
+            StartBombing();            
         }
     }
 
@@ -51,31 +56,10 @@ public class PlayerController : MonoBehaviour
         Instantiate(baseExplosion, transform.position, baseExplosion.transform.rotation);
     }
 
-    // On collision when you try to do something with physics
-    // Passes info about the collision to the method as an argument
-    void OnCollisionEnter(Collision collision) {
-        
-        if(collision.gameObject.CompareTag("Asteroid")) {
-            Destroy(collision.gameObject);
-            powerupCount = 0;
-            EliminatePlayer();            
-        }
-    }
-
-    // On trigger when we want objects to pass through each other but register the collision
-    // Will run or trigger the code in the method when a RigidBody enters the collider
-    private void OnTriggerEnter(Collider other) {
-
-        if (other.gameObject.CompareTag("Powerup")) {
-            Destroy(other.gameObject);
-            powerupCount += 1;
-        }
-    }
-
     void MovePlayer() {
 
         // Moves Player based on arrow keys
-        float horizontalInput = Input.GetAxis("Horizontal");        
+        float horizontalInput = Input.GetAxis("Horizontal");
         float forwardInput = Input.GetAxis("Vertical");
 
         // Deactivate forward move if out of bound
@@ -101,6 +85,50 @@ public class PlayerController : MonoBehaviour
             transform.position = new Vector3(rightLeftBound, transform.position.y, transform.position.z);
         }
     }
+
+    // On collision when you try to do something with physics
+    // Passes info about the collision to the method as an argument
+    void OnCollisionEnter(Collision collision) {
+        
+        if(collision.gameObject.CompareTag("Asteroid")) {
+            Destroy(collision.gameObject);
+            powerupCount = 0;
+            EliminatePlayer();             
+        } 
+    }
+
+    // On trigger when we want objects to pass through each other but register the collision
+    // Will run or trigger the code in the method when a RigidBody enters the collider
+    private void OnTriggerEnter(Collider other) {
+
+        if (other.gameObject.CompareTag("Powerup Multi")) {
+            Destroy(other.gameObject);
+            powerupCount += 1;
+            Debug.Log(powerupCount);
+        
+        } else if (other.gameObject.CompareTag("Powerup Speed")) {
+            Destroy(other.gameObject);
+            if (speed < 20) {
+                speed += 3.4f;
+            } else {
+                points += 100;
+            }
+        
+        } else if (other.gameObject.CompareTag("Powerup Bomb")) {
+            Destroy(other.gameObject);
+            bombs += 1;
+            Debug.Log("Added bombs" + bombs);
+        
+        } else if (other.gameObject.CompareTag("Powerup Life")) {
+            Destroy(other.gameObject);
+            lifes += 1;
+        
+        } else if (other.gameObject.CompareTag("Powerup Shield")) {
+            Destroy(other.gameObject);
+            activateShield();
+        }
+    }
+    
 
     void Shoot() {
 
@@ -132,16 +160,38 @@ public class PlayerController : MonoBehaviour
         return newProjectile;
     }
 
+    private void StartBombing() {
+        if (bombs > 0) {
+            Instantiate(bombExplosion, transform.position, bombExplosion.transform.rotation);
+            StartCoroutine(enemyExplosion());
+            StartCoroutine(stopBombing());
+            bombs -= 1;
+            Debug.Log("Remaining bombs" + bombs);
+        }
+    }
+
     // Checked by enemy, if true they explode
-    private IEnumerator enemyExplosion() {        
+    private IEnumerator enemyExplosion() {
         yield return new WaitForSeconds(0.5f);
-        isBombing = true;
+        isBombing = true;    
     }
 
     // After 1 sec from the previous, stop the enemies from exploding
     private IEnumerator stopBombing() {
         yield return new WaitForSeconds(0.6f);
         isBombing = false;
+    }
+
+    private void activateShield() {
+        isShieldActive = true;
+        shield.SetActive(true);
+        StartCoroutine(deactivateShield());
+    }
+
+    private IEnumerator deactivateShield() {        
+        yield return new WaitForSeconds(10f);
+        isShieldActive = false;
+        shield.SetActive(false);
     }
 
 }

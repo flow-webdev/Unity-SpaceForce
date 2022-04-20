@@ -11,6 +11,13 @@ TagManager:
   - Asteroid
   - EnemyProjectile
   - Runner
+  - Powerup Bomb
+  - Powerup Laser
+  - Powerup Life
+  - Powerup Multi
+  - Powerup Shield
+  - Powerup Speed
+  - Shield
   layers:
   - Default
   - TransparentFX

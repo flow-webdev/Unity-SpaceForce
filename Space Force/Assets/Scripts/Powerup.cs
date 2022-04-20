@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveForward : MonoBehaviour
+public class Powerup : MonoBehaviour
 {
     private float speed = 3f;
     private float offScreen = -35;
