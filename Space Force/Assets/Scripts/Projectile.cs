@@ -32,7 +32,7 @@ public class Projectile : MonoBehaviour
 
     public virtual void OnTriggerEnter(Collider other) {        
         // TO RETURN TO POOL
-        if (other.gameObject.CompareTag("Asteroid") || other.gameObject.CompareTag("Runner")) {
+        if (other.gameObject.CompareTag("Asteroid") || other.gameObject.CompareTag("Enemy")) {
             //Destroy(other.gameObject);
             if (this.gameObject.tag == "Projectile") {
                 ReturnToPool();

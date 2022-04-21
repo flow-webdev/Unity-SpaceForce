@@ -67,9 +67,7 @@ public class ShootAndRun : EnemyScript {
                 transform.position = Vector3.MoveTowards(transform.position, placeholderRight.transform.position, step);
                 transform.LookAt(placeholderRight.transform);
             }
-        }
-
-          
+        }          
     }
 
     private void ShootingTime() {

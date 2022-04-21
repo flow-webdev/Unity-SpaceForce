@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 5291701368477051510}
   m_Layer: 0
   m_Name: Kamikaze
-  m_TagString: Runner
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -129,8 +129,11 @@ MonoBehaviour:
   playerController: {fileID: 0}
   player: {fileID: 0}
   baseExplosion: {fileID: 601290281227765993, guid: d57a08adb9cdbe94796b0af5d228b6b6, type: 3}
+  placeholderLeft: {fileID: 0}
+  placeholderRight: {fileID: 0}
+  placeholderCenter: {fileID: 0}
   speed: 5
-  enemyProjectile: {fileID: 5232524285579110640, guid: 09ca932cec314994c870c526c87c5844, type: 3}
+  timeRemaining: 6
 --- !u!1001 &2096498055260770405
 PrefabInstance:
   m_ObjectHideFlags: 0

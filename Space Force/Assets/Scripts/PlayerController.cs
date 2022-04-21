@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
 {
     private ProjectilePool projectilePool;
     private ProjectileLaserPool projectileLaserPool;
+    private GameManager gameManager;
     public GameObject baseExplosion;
     public GameObject bombExplosion;
     public GameObject shield;
@@ -17,10 +18,8 @@ public class PlayerController : MonoBehaviour
 
     // Powerup affected abilities
     public float speed = 10f;
-    private int powerupCount = 0;
-    private int points = 0;
-    private int bombs = 3;
-    private int lifes = 3;
+    private int powerupCount = 0;    
+    private int bombs = 3;    
 
     // Boundaries
     private float rightLeftBound = 20f;
@@ -34,6 +33,7 @@ public class PlayerController : MonoBehaviour
     void Start() {
         projectilePool = FindObjectOfType<ProjectilePool>();
         projectileLaserPool = FindObjectOfType<ProjectileLaserPool>();
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     // Call before rendering a frame
@@ -58,7 +58,7 @@ public class PlayerController : MonoBehaviour
         isAlive = false;
         powerupCount = 0;
         isLaser = false;
-        Instantiate(baseExplosion, transform.position, baseExplosion.transform.rotation);
+        Instantiate(baseExplosion, transform.position, baseExplosion.transform.rotation);        
     }
 
     void MovePlayer() {
@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
 
         //Constrain player position on Z axis
         if (transform.position.z < -bottomBound) {
-            transform.position = new Vector3(transform.position.x, transform.position.y, -bottomBound);
+            transform.position = new Vector3(transform.position.x, transform.position.y, -bottomBound + 0.1f); //Add 0.1, otherwise with the shield it remain stuck
         } else if (transform.position.z > topBound) {
             transform.position = new Vector3(transform.position.x, transform.position.y, topBound);
         }
@@ -98,8 +98,6 @@ public class PlayerController : MonoBehaviour
         if(collision.gameObject.CompareTag("Asteroid")) {
             Destroy(collision.gameObject);            
             EliminatePlayer();             
-        } else if (collision.gameObject.CompareTag("Shield")) {
-            Debug.Log(collision);
         }
     }
 
@@ -116,7 +114,7 @@ public class PlayerController : MonoBehaviour
             if (speed < 20) {
                 speed += 3.4f;
             } else {
-                points += 100;
+                gameManager.points += 100;
             }
         
         } else if (other.gameObject.CompareTag("Powerup Bomb")) {
@@ -126,19 +124,18 @@ public class PlayerController : MonoBehaviour
         
         } else if (other.gameObject.CompareTag("Powerup Life")) {
             Destroy(other.gameObject);
-            lifes += 1;
+            gameManager.lifes += 1;
         
         } else if (other.gameObject.CompareTag("Powerup Shield")) {
             Destroy(other.gameObject);
-            activateShield();
+            ActivateShield(10f);
         
         } else if (other.gameObject.CompareTag("Powerup Laser")) {
             Destroy(other.gameObject);
             isLaser = true;
             powerupCount = 0;
         }
-    }
-    
+    }    
 
     void Shoot() {
 
@@ -170,13 +167,11 @@ public class PlayerController : MonoBehaviour
                     break;
                 default:
                     GetPoolProjectileLaser(gameObject.transform.position + new Vector3(0, -1, 2f));
-                    GetPoolProjectileLaser(gameObject.transform.position + new Vector3(1, -1, 0.75f));
-                    GetPoolProjectileLaser(gameObject.transform.position + new Vector3(-1, -1, 0.75f));
+                    GetPoolProjectileLaser(gameObject.transform.position + new Vector3(2, -1, 0.75f));
+                    GetPoolProjectileLaser(gameObject.transform.position + new Vector3(-2, -1, 0.75f));
                     break;
             }
-        }
-
-        
+        }        
     }
 
 
@@ -196,35 +191,36 @@ public class PlayerController : MonoBehaviour
     private void StartBombing() {
         if (bombs > 0) {
             Instantiate(bombExplosion, transform.position, bombExplosion.transform.rotation);
-            StartCoroutine(enemyExplosion());
-            StartCoroutine(stopBombing());
+            StartCoroutine(EnemyExplosion());
+            StartCoroutine(StopBombing());
             bombs -= 1;
             Debug.Log("Remaining bombs" + bombs);
         }
     }
 
     // Checked by enemy, if true they explode
-    private IEnumerator enemyExplosion() {
+    private IEnumerator EnemyExplosion() {
         yield return new WaitForSeconds(0.5f);
         isBombing = true;    
     }
 
     // After 1 sec from the previous, stop the enemies from exploding
-    private IEnumerator stopBombing() {
+    private IEnumerator StopBombing() {
         yield return new WaitForSeconds(0.6f);
         isBombing = false;
     }
 
-    private void activateShield() {
+    public void ActivateShield(float shieldTime) {
         isShieldActive = true;
         shield.SetActive(true);
-        StartCoroutine(deactivateShield());
+        StartCoroutine(DeactivateShield(shieldTime));
     }
 
-    private IEnumerator deactivateShield() {        
-        yield return new WaitForSeconds(10f);
+    private IEnumerator DeactivateShield(float shieldTime) {        
+        yield return new WaitForSeconds(shieldTime);
         isShieldActive = false;
         shield.SetActive(false);
     }
+    
 
 }
