@@ -7,9 +7,11 @@ public class Projectile : MonoBehaviour
     public float speed = 40f;
     private float offscreen = 30;
     private ProjectilePool projectilePool;
+    private ProjectileLaserPool projectileLaserPool;
 
     void Start() {
         projectilePool = FindObjectOfType<ProjectilePool>();
+        projectileLaserPool = FindObjectOfType<ProjectileLaserPool>();
     }
 
     public virtual void Update() {
@@ -30,15 +32,25 @@ public class Projectile : MonoBehaviour
 
     public virtual void OnTriggerEnter(Collider other) {        
         // TO RETURN TO POOL
-        if (other.gameObject.CompareTag("Asteroid")) {
-            Destroy(other.gameObject);
-            ReturnToPool();
+        if (other.gameObject.CompareTag("Asteroid") || other.gameObject.CompareTag("Runner")) {
+            //Destroy(other.gameObject);
+            if (this.gameObject.tag == "Projectile") {
+                ReturnToPool();
+            } else if (this.gameObject.tag == "Projectile Laser") {
+                ReturnToPoolLaser();
+            }
         }
     }
 
     void ReturnToPool() {
         if (projectilePool != null) {
             projectilePool.ReturnProjectile(this.gameObject);
+        }
+    }
+
+    void ReturnToPoolLaser() {
+        if (projectileLaserPool != null) {
+            projectileLaserPool.ReturnProjectile(this.gameObject);
         }
     }
 }

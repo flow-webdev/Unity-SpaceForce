@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private ProjectilePool projectilePool;
+    private ProjectileLaserPool projectileLaserPool;
     public GameObject baseExplosion;
     public GameObject bombExplosion;
     public GameObject shield;
@@ -12,6 +13,7 @@ public class PlayerController : MonoBehaviour
     public bool isAlive = true;
     public bool isBombing = false;
     public bool isShieldActive = false;
+    private bool isLaser = false;
 
     // Powerup affected abilities
     public float speed = 10f;
@@ -31,6 +33,7 @@ public class PlayerController : MonoBehaviour
     // Called after awake immeditely before the first Update()
     void Start() {
         projectilePool = FindObjectOfType<ProjectilePool>();
+        projectileLaserPool = FindObjectOfType<ProjectileLaserPool>();
     }
 
     // Call before rendering a frame
@@ -53,6 +56,8 @@ public class PlayerController : MonoBehaviour
     public void EliminatePlayer() {
         gameObject.SetActive(false);
         isAlive = false;
+        powerupCount = 0;
+        isLaser = false;
         Instantiate(baseExplosion, transform.position, baseExplosion.transform.rotation);
     }
 
@@ -91,10 +96,11 @@ public class PlayerController : MonoBehaviour
     void OnCollisionEnter(Collision collision) {
         
         if(collision.gameObject.CompareTag("Asteroid")) {
-            Destroy(collision.gameObject);
-            powerupCount = 0;
+            Destroy(collision.gameObject);            
             EliminatePlayer();             
-        } 
+        } else if (collision.gameObject.CompareTag("Shield")) {
+            Debug.Log(collision);
+        }
     }
 
     // On trigger when we want objects to pass through each other but register the collision
@@ -104,7 +110,6 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag("Powerup Multi")) {
             Destroy(other.gameObject);
             powerupCount += 1;
-            Debug.Log(powerupCount);
         
         } else if (other.gameObject.CompareTag("Powerup Speed")) {
             Destroy(other.gameObject);
@@ -126,36 +131,64 @@ public class PlayerController : MonoBehaviour
         } else if (other.gameObject.CompareTag("Powerup Shield")) {
             Destroy(other.gameObject);
             activateShield();
+        
+        } else if (other.gameObject.CompareTag("Powerup Laser")) {
+            Destroy(other.gameObject);
+            isLaser = true;
+            powerupCount = 0;
         }
     }
     
 
     void Shoot() {
 
-        switch (powerupCount) {
+        if (!isLaser) {
+            switch (powerupCount) {
 
-            case 0:
-                GetPoolProjectile(gameObject.transform.position + new Vector3(0, 0, 2f));
-                break;
-            case 1:
-                GetPoolProjectile(gameObject.transform.position + new Vector3(0, -1, 2f));
-                GetPoolProjectile(gameObject.transform.position + new Vector3(1, -1, 0.75f));
-                GetPoolProjectile(gameObject.transform.position + new Vector3(-1, -1, 0.75f));
-                break;
-            default:
-                GetPoolProjectile(gameObject.transform.position + new Vector3(0, -1, 2f));
-                GetPoolProjectile(gameObject.transform.position + new Vector3(1, -1, 0.75f));
-                GetPoolProjectile(gameObject.transform.position + new Vector3(-1, -1, 0.75f));
-                GetPoolProjectile(gameObject.transform.position + new Vector3(2, -1, 0.5f));
-                GetPoolProjectile(gameObject.transform.position + new Vector3(-2, -1, 0.5f));
-                break;
+                case 0:
+                    GetPoolProjectile(gameObject.transform.position + new Vector3(0, -1, 2f));
+                    break;
+                case 1:
+                    GetPoolProjectile(gameObject.transform.position + new Vector3(0, -1, 2f));
+                    GetPoolProjectile(gameObject.transform.position + new Vector3(1, -1, 0.75f));
+                    GetPoolProjectile(gameObject.transform.position + new Vector3(-1, -1, 0.75f));
+                    break;
+                default:
+                    GetPoolProjectile(gameObject.transform.position + new Vector3(0, -1, 3f));
+                    GetPoolProjectile(gameObject.transform.position + new Vector3(1, -1, 0.75f));
+                    GetPoolProjectile(gameObject.transform.position + new Vector3(-1, -1, 0.75f));
+                    GetPoolProjectile(gameObject.transform.position + new Vector3(2, -1, 0.5f));
+                    GetPoolProjectile(gameObject.transform.position + new Vector3(-2, -1, 0.5f));
+                    break;
+            }
+        
+        } else {
+            switch (powerupCount) {
+
+                case 0:
+                    GetPoolProjectileLaser(gameObject.transform.position + new Vector3(0, -1, 2f));
+                    break;
+                default:
+                    GetPoolProjectileLaser(gameObject.transform.position + new Vector3(0, -1, 2f));
+                    GetPoolProjectileLaser(gameObject.transform.position + new Vector3(1, -1, 0.75f));
+                    GetPoolProjectileLaser(gameObject.transform.position + new Vector3(-1, -1, 0.75f));
+                    break;
+            }
         }
+
+        
     }
 
 
     // Method that return a projectile from the pool
     private GameObject GetPoolProjectile(Vector3 vectorPos) {
         GameObject newProjectile = projectilePool.GetProjectile();
+        newProjectile.transform.position = vectorPos;
+        return newProjectile;
+    }
+
+    private GameObject GetPoolProjectileLaser(Vector3 vectorPos) {
+        GameObject newProjectile = projectileLaserPool.GetProjectile();
         newProjectile.transform.position = vectorPos;
         return newProjectile;
     }

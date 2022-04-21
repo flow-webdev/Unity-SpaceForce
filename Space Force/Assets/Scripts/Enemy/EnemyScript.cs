@@ -40,7 +40,7 @@ public abstract class EnemyScript : MonoBehaviour {
 
     protected void OnTriggerEnter(Collider other) {
 
-        if (other.gameObject.CompareTag("Projectile")) {
+        if (other.gameObject.CompareTag("Projectile") || other.gameObject.CompareTag("Projectile Laser")) {
             Explode();
         }
     }
