@@ -34,6 +34,8 @@ public class PlayerController : MonoBehaviour
         projectilePool = FindObjectOfType<ProjectilePool>();
         projectileLaserPool = FindObjectOfType<ProjectileLaserPool>();
         gameManager = FindObjectOfType<GameManager>();
+
+        
     }
 
     // Call before rendering a frame
@@ -44,6 +46,12 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.M)) { // Release bomb
             StartBombing();            
+        }
+
+        if (Input.GetKeyDown(KeyCode.B)) {
+            float prova = 9;
+            Debug.Log("float prova mod 2=" + prova % 2);
+            Debug.Log("float prova mod 1=" +  prova % 5);
         }
     }
 
@@ -81,7 +89,7 @@ public class PlayerController : MonoBehaviour
         if (transform.position.z < -bottomBound) {
             transform.position = new Vector3(transform.position.x, transform.position.y, -bottomBound + 0.1f); //Add 0.1, otherwise with the shield it remain stuck
         } else if (transform.position.z > topBound) {
-            transform.position = new Vector3(transform.position.x, transform.position.y, topBound);
+            transform.position = new Vector3(transform.position.x, transform.position.y, topBound - 0.1f);
         }
         // Constrain player position on X axis
         if (transform.position.x < -rightLeftBound) {
@@ -124,12 +132,13 @@ public class PlayerController : MonoBehaviour
         
         } else if (other.gameObject.CompareTag("Powerup Life")) {
             Destroy(other.gameObject);
-            gameManager.lifes += 1;
+            gameManager.lives += 1;
         
         } else if (other.gameObject.CompareTag("Powerup Shield")) {
             Destroy(other.gameObject);
-            ActivateShield(10f);
-        
+            ActivateShield();
+            StartCoroutine(DeactivateShield());
+
         } else if (other.gameObject.CompareTag("Powerup Laser")) {
             Destroy(other.gameObject);
             isLaser = true;
@@ -210,17 +219,19 @@ public class PlayerController : MonoBehaviour
         isBombing = false;
     }
 
-    public void ActivateShield(float shieldTime) {
+    public void ActivateShield() {
         isShieldActive = true;
-        shield.SetActive(true);
-        StartCoroutine(DeactivateShield(shieldTime));
+        shield.SetActive(true);        
     }
 
-    private IEnumerator DeactivateShield(float shieldTime) {        
-        yield return new WaitForSeconds(shieldTime);
+    private IEnumerator DeactivateShield() {        
+        yield return new WaitForSeconds(10f);
         isShieldActive = false;
         shield.SetActive(false);
     }
-    
 
+    public void DeactivateShieldInstant() {      
+        isShieldActive = false;
+        shield.SetActive(false);
+    }
 }
