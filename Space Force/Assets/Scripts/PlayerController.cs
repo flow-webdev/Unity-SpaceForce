@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
     private int bombs = 3;    
 
     // Boundaries
-    private float rightLeftBound = 20f;
+    private float rightLeftBound = 30f;
     private float bottomBound = 8.5f;
     private float topBound = 12f;    
 

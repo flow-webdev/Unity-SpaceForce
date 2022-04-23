@@ -5,8 +5,8 @@ using UnityEngine;
 public class SpawnManager : MonoBehaviour
 {
     public GameObject[] asteroids;
-    public GameObject powerUp;
-    public GameObject[] enemy;
+    public GameObject[] powerUps;
+    public GameObject[] enemies;
     public GameObject runner;
     private Vector3[] enemySpawnCoordinates;
 
@@ -35,15 +35,13 @@ public class SpawnManager : MonoBehaviour
     }
 
     void AsteroidsSpawn() {
-
-        int index = Random.Range(0, asteroids.Length);        
-
+        int index = Random.Range(0, asteroids.Length);
         Instantiate(asteroids[index], RandomVector(), asteroids[index].gameObject.transform.rotation); 
     }
 
     void PowerUpSpawn() {
-
-        Instantiate(powerUp, RandomVector(), powerUp.gameObject.transform.rotation);
+        int index = Random.Range(0, powerUps.Length);
+        Instantiate(powerUps[index], RandomVector(), powerUps[index].gameObject.transform.rotation);
     }
 
     Vector3 RandomVector() {
@@ -54,12 +52,12 @@ public class SpawnManager : MonoBehaviour
 
     void EnemySpawn() {
 
-        int enemyIndex = Random.Range(0, enemy.Length);
+        int enemyIndex = Random.Range(0, enemies.Length);
       
         int coordinatesIndex = ReturnCoordinates(previousCoordinate);
         previousCoordinate = coordinatesIndex;
 
-        Instantiate(enemy[enemyIndex], enemySpawnCoordinates[coordinatesIndex], enemy[enemyIndex].gameObject.transform.rotation);
+        Instantiate(enemies[enemyIndex], enemySpawnCoordinates[coordinatesIndex], enemies[enemyIndex].gameObject.transform.rotation);
     }    
 
     void InitializeEnemyCoordinates() {
