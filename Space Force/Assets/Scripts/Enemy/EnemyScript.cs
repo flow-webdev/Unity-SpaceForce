@@ -2,14 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))] 
 public abstract class EnemyScript : MonoBehaviour {
     public PlayerController playerController;
     public GameObject player;
     public GameObject baseExplosion;
+    public GameManager gameManager;
 
     public GameObject placeholderLeft;
     public GameObject placeholderRight;
     public GameObject placeholderCenter;
+
+    public AudioSource audioSource;
+    public AudioClip shootingSound;
 
     private float verticalOffscreen = 15f;
     private float horizontalOffscreen = 55f;
@@ -18,8 +23,12 @@ public abstract class EnemyScript : MonoBehaviour {
 
     protected virtual void Start() {
         playerController = GameObject.FindObjectOfType<PlayerController>(true); // With true find GameObject active or inactive
+        gameManager = GameObject.FindObjectOfType<GameManager>();
         player = GameObject.Find("Player");
         this.GetComponent<Rigidbody>().sleepThreshold = 0; // Without this, when not moving, trigger is not detected
+
+        audioSource = GetComponent<AudioSource>();
+        //explodeSound = Resources.Load<AudioClip>("Sounds/projectsu012__boom5");
 
         placeholderLeft = GameObject.Find("Placeholder Left");
         placeholderRight = GameObject.Find("Placeholder Right");
@@ -65,8 +74,10 @@ public abstract class EnemyScript : MonoBehaviour {
         }
     }
 
-    public void Explode() {
-        Destroy(gameObject);
+    protected void Explode() {
+
+        gameManager.PlayExplosionAudio();
+        Destroy(gameObject);                
         Instantiate(baseExplosion, transform.position, baseExplosion.transform.rotation);
     }
 

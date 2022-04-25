@@ -27,6 +27,7 @@ public class ShootAndRun : EnemyScript {
     protected override void Shoot() {
 
         if (playerController.isAlive) {
+            audioSource.PlayOneShot(shootingSound);
             Instantiate(enemyProjectile, gameObject.transform.position, transform.rotation);
         }
     }

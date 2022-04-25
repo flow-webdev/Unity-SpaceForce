@@ -9,7 +9,7 @@ public class ShooterScript : EnemyScript {
     private float timeLimit = 0.9f;
 
     protected override void Start() {
-        base.Start();              
+        base.Start();
     }
 
     protected override void Update() {
@@ -23,6 +23,7 @@ public class ShooterScript : EnemyScript {
     protected override void Shoot() {
 
         if (playerController.isAlive) {
+            audioSource.PlayOneShot(shootingSound);
             Instantiate(enemyProjectile, gameObject.transform.position, transform.rotation);
         }
     }

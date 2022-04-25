@@ -129,9 +129,12 @@ MonoBehaviour:
   playerController: {fileID: 0}
   player: {fileID: 0}
   baseExplosion: {fileID: 601290281227765993, guid: d57a08adb9cdbe94796b0af5d228b6b6, type: 3}
+  gameManager: {fileID: 0}
   placeholderLeft: {fileID: 0}
   placeholderRight: {fileID: 0}
   placeholderCenter: {fileID: 0}
+  audioSource: {fileID: 0}
+  shootingSound: {fileID: 8300000, guid: 187e81d7942d7fe4cad5483b289aee58, type: 3}
   speed: 5
   timeRemaining: 6
 --- !u!1001 &2096498055260770405

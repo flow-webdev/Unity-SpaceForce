@@ -11,6 +11,12 @@ public class PlayerController : MonoBehaviour
     public GameObject bombExplosion;
     public GameObject shield;
 
+    private AudioSource audioSource;
+    public AudioClip coinSound;
+    public AudioClip rocketSound;
+    public AudioClip laserSound;
+    public AudioClip bombSound;    
+
     public bool isAlive = true;
     public bool isBombing = false;
     public bool isShieldActive = false;
@@ -35,23 +41,17 @@ public class PlayerController : MonoBehaviour
         projectileLaserPool = FindObjectOfType<ProjectileLaserPool>();
         gameManager = FindObjectOfType<GameManager>();
 
-        
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Call before rendering a frame
     void Update() {
-        if(Input.GetKeyDown(KeyCode.Space)) {
-            Shoot();
+        if(Input.GetKeyDown(KeyCode.K)) {
+            Shoot();            
         }
 
-        if (Input.GetKeyDown(KeyCode.M)) { // Release bomb
+        if (Input.GetKeyDown(KeyCode.L)) { // Release bomb
             StartBombing();            
-        }
-
-        if (Input.GetKeyDown(KeyCode.B)) {
-            float prova = 9;
-            Debug.Log("float prova mod 2=" + prova % 2);
-            Debug.Log("float prova mod 1=" +  prova % 5);
         }
     }
 
@@ -61,11 +61,15 @@ public class PlayerController : MonoBehaviour
         Boundaries();
     }
 
-    public void EliminatePlayer() {
+    public void EliminatePlayer() {        
         gameObject.SetActive(false);
+        gameManager.PlayExplosionAudio();
         isAlive = false;
         powerupCount = 0;
         isLaser = false;
+        speed = 10f;
+        bombs = 3;
+        gameManager.lives -= 1;
         Instantiate(baseExplosion, transform.position, baseExplosion.transform.rotation);        
     }
 
@@ -115,32 +119,38 @@ public class PlayerController : MonoBehaviour
 
         if (other.gameObject.CompareTag("Powerup Multi")) {
             Destroy(other.gameObject);
+            audioSource.PlayOneShot(coinSound);
             powerupCount += 1;
-        
+
         } else if (other.gameObject.CompareTag("Powerup Speed")) {
             Destroy(other.gameObject);
+            audioSource.PlayOneShot(coinSound);
             if (speed < 20) {
                 speed += 3.4f;
             } else {
                 gameManager.points += 100;
             }
-        
+
         } else if (other.gameObject.CompareTag("Powerup Bomb")) {
             Destroy(other.gameObject);
+            audioSource.PlayOneShot(coinSound);
             bombs += 1;
             Debug.Log("Added bombs" + bombs);
-        
+
         } else if (other.gameObject.CompareTag("Powerup Life")) {
             Destroy(other.gameObject);
+            audioSource.PlayOneShot(coinSound);
             gameManager.lives += 1;
-        
+
         } else if (other.gameObject.CompareTag("Powerup Shield")) {
             Destroy(other.gameObject);
+            audioSource.PlayOneShot(coinSound);
             ActivateShield();
             StartCoroutine(DeactivateShield());
 
         } else if (other.gameObject.CompareTag("Powerup Laser")) {
             Destroy(other.gameObject);
+            audioSource.PlayOneShot(coinSound);
             isLaser = true;
             powerupCount = 0;
         }
@@ -149,6 +159,7 @@ public class PlayerController : MonoBehaviour
     void Shoot() {
 
         if (!isLaser) {
+            audioSource.PlayOneShot(rocketSound);            
             switch (powerupCount) {
 
                 case 0:
@@ -169,6 +180,7 @@ public class PlayerController : MonoBehaviour
             }
         
         } else {
+            audioSource.PlayOneShot(laserSound);
             switch (powerupCount) {
 
                 case 0:
@@ -199,6 +211,7 @@ public class PlayerController : MonoBehaviour
 
     private void StartBombing() {
         if (bombs > 0) {
+            audioSource.PlayOneShot(bombSound);
             Instantiate(bombExplosion, transform.position, bombExplosion.transform.rotation);
             StartCoroutine(EnemyExplosion());
             StartCoroutine(StopBombing());
