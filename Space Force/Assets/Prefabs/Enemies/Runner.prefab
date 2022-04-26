@@ -129,7 +129,7 @@ MonoBehaviour:
   playerController: {fileID: 0}
   player: {fileID: 0}
   baseExplosion: {fileID: 601290281227765993, guid: d57a08adb9cdbe94796b0af5d228b6b6, type: 3}
-  gameManager: {fileID: 0}
+  levelManager: {fileID: 0}
   placeholderLeft: {fileID: 0}
   placeholderRight: {fileID: 0}
   placeholderCenter: {fileID: 0}

@@ -6,7 +6,7 @@ public class PlayerController : MonoBehaviour
 {
     private ProjectilePool projectilePool;
     private ProjectileLaserPool projectileLaserPool;
-    private GameManager gameManager;
+    private LevelManager levelManager;
     public GameObject baseExplosion;
     public GameObject bombExplosion;
     public GameObject shield;
@@ -14,8 +14,7 @@ public class PlayerController : MonoBehaviour
     private AudioSource audioSource;
     public AudioClip coinSound;
     public AudioClip rocketSound;
-    public AudioClip laserSound;
-    public AudioClip bombSound;    
+    public AudioClip laserSound; 
 
     public bool isAlive = true;
     public bool isBombing = false;
@@ -23,9 +22,7 @@ public class PlayerController : MonoBehaviour
     private bool isLaser = false;
 
     // Powerup affected abilities
-    public float speed = 10f;
-    private int powerupCount = 0;    
-    private int bombs = 3;    
+    public float speed;      
 
     // Boundaries
     private float rightLeftBound = 30f;
@@ -39,18 +36,19 @@ public class PlayerController : MonoBehaviour
     void Start() {
         projectilePool = FindObjectOfType<ProjectilePool>();
         projectileLaserPool = FindObjectOfType<ProjectileLaserPool>();
-        gameManager = FindObjectOfType<GameManager>();
+        levelManager = FindObjectOfType<LevelManager>();
 
         audioSource = GetComponent<AudioSource>();
+        speed = GameManager.Instance.speed;
     }
 
     // Call before rendering a frame
     void Update() {
-        if(Input.GetKeyDown(KeyCode.K)) {
+        if(Input.GetKeyDown(KeyCode.K) && !MenuUIHandler.Instance.isPause) {
             Shoot();            
         }
 
-        if (Input.GetKeyDown(KeyCode.L)) { // Release bomb
+        if (Input.GetKeyDown(KeyCode.L) && !MenuUIHandler.Instance.isPause) { // Release bomb
             StartBombing();            
         }
     }
@@ -63,13 +61,13 @@ public class PlayerController : MonoBehaviour
 
     public void EliminatePlayer() {        
         gameObject.SetActive(false);
-        gameManager.PlayExplosionAudio();
+        levelManager.PlayExplosionAudio();
         isAlive = false;
-        powerupCount = 0;
+        GameManager.Instance.powerupCount = 0;
         isLaser = false;
         speed = 10f;
-        bombs = 3;
-        gameManager.lives -= 1;
+        GameManager.Instance.bombs = 3;
+        GameManager.Instance.lives -= 1;
         Instantiate(baseExplosion, transform.position, baseExplosion.transform.rotation);        
     }
 
@@ -120,7 +118,7 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag("Powerup Multi")) {
             Destroy(other.gameObject);
             audioSource.PlayOneShot(coinSound);
-            powerupCount += 1;
+            GameManager.Instance.powerupCount += 1;
 
         } else if (other.gameObject.CompareTag("Powerup Speed")) {
             Destroy(other.gameObject);
@@ -128,19 +126,18 @@ public class PlayerController : MonoBehaviour
             if (speed < 20) {
                 speed += 3.4f;
             } else {
-                gameManager.points += 100;
+                GameManager.Instance.points += 100;
             }
 
         } else if (other.gameObject.CompareTag("Powerup Bomb")) {
             Destroy(other.gameObject);
             audioSource.PlayOneShot(coinSound);
-            bombs += 1;
-            Debug.Log("Added bombs" + bombs);
+            GameManager.Instance.bombs += 1;
 
         } else if (other.gameObject.CompareTag("Powerup Life")) {
             Destroy(other.gameObject);
             audioSource.PlayOneShot(coinSound);
-            gameManager.lives += 1;
+            GameManager.Instance.lives += 1;
 
         } else if (other.gameObject.CompareTag("Powerup Shield")) {
             Destroy(other.gameObject);
@@ -152,7 +149,7 @@ public class PlayerController : MonoBehaviour
             Destroy(other.gameObject);
             audioSource.PlayOneShot(coinSound);
             isLaser = true;
-            powerupCount = 0;
+            GameManager.Instance.powerupCount = 0;
         }
     }    
 
@@ -160,7 +157,7 @@ public class PlayerController : MonoBehaviour
 
         if (!isLaser) {
             audioSource.PlayOneShot(rocketSound);            
-            switch (powerupCount) {
+            switch (GameManager.Instance.powerupCount) {
 
                 case 0:
                     GetPoolProjectile(gameObject.transform.position + new Vector3(0, -1, 2f));
@@ -181,7 +178,7 @@ public class PlayerController : MonoBehaviour
         
         } else {
             audioSource.PlayOneShot(laserSound);
-            switch (powerupCount) {
+            switch (GameManager.Instance.powerupCount) {
 
                 case 0:
                     GetPoolProjectileLaser(gameObject.transform.position + new Vector3(0, -1, 2f));
@@ -210,13 +207,11 @@ public class PlayerController : MonoBehaviour
     }
 
     private void StartBombing() {
-        if (bombs > 0) {
-            audioSource.PlayOneShot(bombSound);
+        if (GameManager.Instance.bombs > 0) {
             Instantiate(bombExplosion, transform.position, bombExplosion.transform.rotation);
             StartCoroutine(EnemyExplosion());
             StartCoroutine(StopBombing());
-            bombs -= 1;
-            Debug.Log("Remaining bombs" + bombs);
+            GameManager.Instance.bombs -= 1;
         }
     }
 

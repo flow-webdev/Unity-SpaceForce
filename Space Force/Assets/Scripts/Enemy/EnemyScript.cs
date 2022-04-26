@@ -7,7 +7,7 @@ public abstract class EnemyScript : MonoBehaviour {
     public PlayerController playerController;
     public GameObject player;
     public GameObject baseExplosion;
-    public GameManager gameManager;
+    public LevelManager levelManager;
 
     public GameObject placeholderLeft;
     public GameObject placeholderRight;
@@ -23,7 +23,7 @@ public abstract class EnemyScript : MonoBehaviour {
 
     protected virtual void Start() {
         playerController = GameObject.FindObjectOfType<PlayerController>(true); // With true find GameObject active or inactive
-        gameManager = GameObject.FindObjectOfType<GameManager>();
+        levelManager = GameObject.FindObjectOfType<LevelManager>();
         player = GameObject.Find("Player");
         this.GetComponent<Rigidbody>().sleepThreshold = 0; // Without this, when not moving, trigger is not detected
 
@@ -76,7 +76,7 @@ public abstract class EnemyScript : MonoBehaviour {
 
     protected void Explode() {
 
-        gameManager.PlayExplosionAudio();
+        levelManager.PlayExplosionAudio();
         Destroy(gameObject);                
         Instantiate(baseExplosion, transform.position, baseExplosion.transform.rotation);
     }

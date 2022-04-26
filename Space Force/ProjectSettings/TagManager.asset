@@ -19,6 +19,7 @@ TagManager:
   - Powerup Speed
   - Shield
   - Projectile Laser
+  - Pause
   layers:
   - Default
   - TransparentFX
