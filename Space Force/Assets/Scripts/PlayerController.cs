@@ -51,6 +51,10 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.L) && !MenuUIHandler.Instance.isPause) { // Release bomb
             StartBombing();            
         }
+
+        if (Input.GetKeyDown(KeyCode.Space) && !MenuUIHandler.Instance.isPause) { 
+            EliminatePlayer();
+        }
     }
 
     // Call before perform any physics calculation (physics code goes here)
@@ -59,7 +63,7 @@ public class PlayerController : MonoBehaviour
         Boundaries();
     }
 
-    public void EliminatePlayer() {        
+    public void EliminatePlayer() {   
         gameObject.SetActive(false);
         levelManager.PlayExplosionAudio();
         isAlive = false;
@@ -68,6 +72,7 @@ public class PlayerController : MonoBehaviour
         speed = 10f;
         GameManager.Instance.bombs = 3;
         GameManager.Instance.lives -= 1;
+        GameManager.Instance.UpdateLives(1);
         Instantiate(baseExplosion, transform.position, baseExplosion.transform.rotation);        
     }
 
@@ -138,6 +143,7 @@ public class PlayerController : MonoBehaviour
             Destroy(other.gameObject);
             audioSource.PlayOneShot(coinSound);
             GameManager.Instance.lives += 1;
+
 
         } else if (other.gameObject.CompareTag("Powerup Shield")) {
             Destroy(other.gameObject);

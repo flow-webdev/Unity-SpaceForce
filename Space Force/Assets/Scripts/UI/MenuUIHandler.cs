@@ -17,10 +17,15 @@ public class MenuUIHandler : MonoBehaviour
     public Canvas quit;
     public Canvas settings;
     public Canvas pause;
+    public Canvas gameOver;
 
-    public LevelManager levelManager;
+    [SerializeField] private CanvasGroup gameOverCanvasGroup;
+    [SerializeField] private bool fadeIn = true;
 
-    private bool oppositeBool = false;
+    [SerializeField] private LevelManager levelManager;
+
+    [SerializeField]  private bool oppositeBool = false;
+    [SerializeField]  private bool mainMenuBool = false;
     public bool isPause = false;
 
     private void Awake() {
@@ -31,14 +36,18 @@ public class MenuUIHandler : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject); // This code enables you to access the MainManager object from any other script. 
+        DontDestroyOnLoad(gameObject); // This code enables you to access the MenuUI object from any other script. 
+    }
+
+    private void Start() {
+        gameOverCanvasGroup = gameOver.GetComponent<CanvasGroup>();
     }
 
     public void StartNew() {
-        StartCoroutine(StartNewCoroutine());
+        StartCoroutine(StartNewGameCoroutine());
     }
 
-    public IEnumerator StartNewCoroutine() {
+    private IEnumerator StartNewGameCoroutine() {
         yield return new WaitForSeconds(0.5f);
         SceneManager.LoadScene(1);
         home.gameObject.SetActive(false);
@@ -63,6 +72,30 @@ public class MenuUIHandler : MonoBehaviour
         isPause = false;
         pause.gameObject.SetActive(isPause);
         levelManager.PauseGame();
+    }
+
+    public void OnGameOver() {
+        
+        gameOver.gameObject.SetActive(true);
+
+        if (fadeIn) {
+            if (gameOverCanvasGroup.alpha < 1) {
+                gameOverCanvasGroup.alpha += Time.deltaTime;
+            } else if (gameOverCanvasGroup.alpha >= 1) {
+                fadeIn = false;
+            }
+        }
+    }
+
+    public void OnMainMenu() {
+        if (GameManager.Instance.isGameOver) { //&& mainMenuBool
+            SceneManager.LoadScene(0);
+            fadeIn = true;            
+            gameOverCanvasGroup.alpha = 0;            
+            gameOver.gameObject.SetActive(false);
+            home.gameObject.SetActive(true);            
+        }
+        GameManager.Instance.ResetNewGame();
     }
 
     public void OnExitGame() {
