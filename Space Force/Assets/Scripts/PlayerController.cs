@@ -40,6 +40,17 @@ public class PlayerController : MonoBehaviour
 
         audioSource = GetComponent<AudioSource>();
         speed = GameManager.Instance.speed;
+
+        // Apparently Coroutine perform better than Invoke/InvokeRepeating
+        StartCoroutine(TimerCoroutine()); //GameManager.Instance.InvokeRepeating("UpdateTime", 1, 1);
+    }
+
+    private IEnumerator TimerCoroutine() {
+
+        while(GameManager.Instance.time >= 1) {
+            yield return new WaitForSeconds(1f);
+            GameManager.Instance.UpdateTime();
+        }        
     }
 
     // Call before rendering a frame
@@ -52,7 +63,7 @@ public class PlayerController : MonoBehaviour
             StartBombing();            
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && !MenuUIHandler.Instance.isPause) { 
+        if (Input.GetKeyDown(KeyCode.Space) && !MenuUIHandler.Instance.isPause) {
             EliminatePlayer();
         }
     }
@@ -70,9 +81,9 @@ public class PlayerController : MonoBehaviour
         GameManager.Instance.powerupCount = 0;
         isLaser = false;
         speed = 10f;
-        GameManager.Instance.bombs = 3;
-        GameManager.Instance.lives -= 1;
-        GameManager.Instance.UpdateLives(1);
+        GameManager.Instance.bombs = 0;
+        GameManager.Instance.UpdateBombs(3, true);
+        GameManager.Instance.UpdateLives(1, false);
         Instantiate(baseExplosion, transform.position, baseExplosion.transform.rotation);        
     }
 
@@ -122,8 +133,12 @@ public class PlayerController : MonoBehaviour
 
         if (other.gameObject.CompareTag("Powerup Multi")) {
             Destroy(other.gameObject);
-            audioSource.PlayOneShot(coinSound);
-            GameManager.Instance.powerupCount += 1;
+            audioSource.PlayOneShot(coinSound);            
+            if(isLaser && GameManager.Instance.powerupCount == 1 || !isLaser && GameManager.Instance.powerupCount == 2) {
+                GameManager.Instance.UpdateScore(1000);
+            } else {
+                GameManager.Instance.powerupCount += 1;
+            }
 
         } else if (other.gameObject.CompareTag("Powerup Speed")) {
             Destroy(other.gameObject);
@@ -131,18 +146,18 @@ public class PlayerController : MonoBehaviour
             if (speed < 20) {
                 speed += 3.4f;
             } else {
-                GameManager.Instance.points += 100;
+                GameManager.Instance.UpdateScore(1000);
             }
 
         } else if (other.gameObject.CompareTag("Powerup Bomb")) {
             Destroy(other.gameObject);
             audioSource.PlayOneShot(coinSound);
-            GameManager.Instance.bombs += 1;
+            GameManager.Instance.UpdateBombs(1, true);
 
         } else if (other.gameObject.CompareTag("Powerup Life")) {
             Destroy(other.gameObject);
             audioSource.PlayOneShot(coinSound);
-            GameManager.Instance.lives += 1;
+            GameManager.Instance.UpdateLives(1, true);
 
 
         } else if (other.gameObject.CompareTag("Powerup Shield")) {
@@ -154,8 +169,12 @@ public class PlayerController : MonoBehaviour
         } else if (other.gameObject.CompareTag("Powerup Laser")) {
             Destroy(other.gameObject);
             audioSource.PlayOneShot(coinSound);
-            isLaser = true;
-            GameManager.Instance.powerupCount = 0;
+            if (!isLaser) {
+                isLaser = true;
+                GameManager.Instance.powerupCount = 0;
+            } else {
+                GameManager.Instance.UpdateScore(1000);
+            }            
         }
     }    
 
@@ -217,7 +236,7 @@ public class PlayerController : MonoBehaviour
             Instantiate(bombExplosion, transform.position, bombExplosion.transform.rotation);
             StartCoroutine(EnemyExplosion());
             StartCoroutine(StopBombing());
-            GameManager.Instance.bombs -= 1;
+            GameManager.Instance.UpdateBombs(1, false);
         }
     }
 

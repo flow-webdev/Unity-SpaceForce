@@ -79,6 +79,12 @@ public abstract class EnemyScript : MonoBehaviour {
         levelManager.PlayExplosionAudio();
         Destroy(gameObject);                
         Instantiate(baseExplosion, transform.position, baseExplosion.transform.rotation);
+        
+        if (this.gameObject.name == "Shooter(Clone)" || this.gameObject.name == "Kamikaze(Clone)") {
+            GameManager.Instance.UpdateScore(100);
+        } else {
+            GameManager.Instance.UpdateScore(100);
+        }
     }
 
     protected abstract void Shoot();

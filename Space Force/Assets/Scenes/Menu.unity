@@ -329,11 +329,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
-  lives: 1
+  lives: 3
   points: 0
   powerupCount: 0
   bombs: 3
   isGameOver: 0
+  time: 200
+  livesText: {fileID: 0}
+  bombsText: {fileID: 0}
+  pointsText: {fileID: 0}
+  timeText: {fileID: 0}
 --- !u!4 &1974028226
 Transform:
   m_ObjectHideFlags: 0
