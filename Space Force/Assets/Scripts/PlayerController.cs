@@ -40,18 +40,7 @@ public class PlayerController : MonoBehaviour
 
         audioSource = GetComponent<AudioSource>();
         speed = GameManager.Instance.speed;
-
-        // Apparently Coroutine perform better than Invoke/InvokeRepeating
-        StartCoroutine(TimerCoroutine()); //GameManager.Instance.InvokeRepeating("UpdateTime", 1, 1);
-    }
-
-    private IEnumerator TimerCoroutine() {
-
-        while(GameManager.Instance.time >= 1) {
-            yield return new WaitForSeconds(1f);
-            GameManager.Instance.UpdateTime();
-        }        
-    }
+    }    
 
     // Call before rendering a frame
     void Update() {
@@ -80,7 +69,7 @@ public class PlayerController : MonoBehaviour
         isAlive = false;
         GameManager.Instance.powerupCount = 0;
         isLaser = false;
-        speed = 10f;
+        speed = 15f;
         GameManager.Instance.bombs = 0;
         GameManager.Instance.UpdateBombs(3, true);
         GameManager.Instance.UpdateLives(1, false);
@@ -143,8 +132,8 @@ public class PlayerController : MonoBehaviour
         } else if (other.gameObject.CompareTag("Powerup Speed")) {
             Destroy(other.gameObject);
             audioSource.PlayOneShot(coinSound);
-            if (speed < 20) {
-                speed += 3.4f;
+            if (speed <= 20) {
+                speed += 5f;
             } else {
                 GameManager.Instance.UpdateScore(1000);
             }

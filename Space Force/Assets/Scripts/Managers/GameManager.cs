@@ -8,18 +8,20 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    public float speed = 10f;
+    public float speed = 15f;
     public int lives = 3;
     public int points = 0;
     public int powerupCount = 0;
     public int bombs = 3;
     public bool isGameOver = false;
-    public int time = 200;
+    public bool isVictory = false; // Alert EnemyScript and SpawnManager to stop
+    public int time = 150;
 
-    [SerializeField] public Text livesText;
+    [SerializeField] private Text livesText;
     [SerializeField] private Text bombsText;
     [SerializeField] private Text pointsText;
     [SerializeField] private Text timeText;
+    [SerializeField] private Text pointsTextVictory;
 
     private void Awake() {
 
@@ -55,28 +57,33 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    public void ResetNewGame() {
-        speed = 10f;
-        lives = 1;
+    public void ResetNewGame() { // Called by MenuUIHandler if GameOver button is clicked
+        speed = 15f;
+        lives = 3;
         points = 0;
         powerupCount = 0;
         bombs = 3;
         isGameOver = false;
-        time = 200;
-        CancelInvoke();
+        isVictory = false;
+        time = 150;
     }
 
-    public void UpdateTime() {
+    public void UpdateTime() { // Timer called by LevelManager every second
         time -= 1;
         timeText.text = "TIME : " + time;
-        if (time <= 0) {
-            Debug.Log("FINISH");
+
+        if (time < 150) {
+            MenuUIHandler.Instance.home.gameObject.SetActive(false);
         }
     }
 
     public void UpdateScore(int scoreToAdd) {
         points += scoreToAdd;
         pointsText.text = "POINTS : " + points;
+    }
+
+    public void UpdatePointsVictory() {
+        pointsTextVictory.text = "POINTS : " + points;
     }
 
     public void UpdateLives(int livesToAdd, bool isTrue) {

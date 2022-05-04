@@ -23,7 +23,7 @@ public class KamikazeScript : EnemyScript {
         float step = speed * Time.deltaTime;
 
         if (playerController.isAlive) {
-            if (timeRemaining > 3) {
+            if (timeRemaining > 4.5f) {
                 timeRemaining -= Time.deltaTime;
                 transform.Translate(Vector3.forward * step);
 

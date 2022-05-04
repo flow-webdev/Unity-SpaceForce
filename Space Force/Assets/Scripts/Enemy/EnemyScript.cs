@@ -44,7 +44,9 @@ public abstract class EnemyScript : MonoBehaviour {
     }
 
     protected virtual void FixedUpdate() {
-        Movement();
+        if (!GameManager.Instance.isVictory) {
+            Movement();
+        }
     }
 
     protected void OnTriggerEnter(Collider other) {
@@ -86,8 +88,7 @@ public abstract class EnemyScript : MonoBehaviour {
             GameManager.Instance.UpdateScore(100);
         }
     }
-
-    protected abstract void Shoot();
-
     protected abstract void Movement();
+
+    protected abstract void Shoot();    
 }

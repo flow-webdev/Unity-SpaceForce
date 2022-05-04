@@ -8,8 +8,10 @@ public class LevelManager : MonoBehaviour
     private PlayerController playerController;
     public Material white, red;
 
-    private AudioSource audioSource;
-    public AudioClip explodeSound;   
+    [SerializeField] AudioSource audioSource;
+    public AudioClip explodeSound;
+    //public AudioClip winnerSound;
+    //public AudioClip loserSound;
 
     public bool isChangeColor = false; // enchance color change during coroutine
     private bool reviveCoroutineRunning = false; // Without this bool, coroutine starts every frame    
@@ -17,17 +19,30 @@ public class LevelManager : MonoBehaviour
 
     void Start() {
         playerController = FindObjectOfType<PlayerController>(true);
-        audioSource = GetComponent<AudioSource>();
+
+        // Apparently Coroutine perform better than Invoke/InvokeRepeating
+        StartCoroutine(TimerCoroutine()); //GameManager.Instance.InvokeRepeating("UpdateTime", 1, 1);
     }
 
+    private IEnumerator TimerCoroutine() {
+
+        while (GameManager.Instance.time >= 1) {
+            yield return new WaitForSeconds(1f);
+            GameManager.Instance.UpdateTime();
+        }
+    }
 
     void Update() {
 
-        if (GameManager.Instance.lives <= 0) { // GameOver if player has no lives
+        if (GameManager.Instance.lives <= 0) { // GameOver if player has no lives CHIEDERE && !GameManager.Instance.isGameOver
             GameOver();
         }
-        else if (!playerController.isAlive && !reviveCoroutineRunning && GameManager.Instance.lives > 0) { // Reactivate player if has lives
+        else if (!playerController.isAlive && !reviveCoroutineRunning && GameManager.Instance.lives > 0) { // Reactivate player if has lives left
             StartCoroutine(ReviveCoroutine());
+        }
+
+        if (GameManager.Instance.time <= 0 && playerController.isAlive) { // Victory if time is 0
+            Victory();            
         }
 
         if (Input.GetKeyDown(KeyCode.P) && !MenuUIHandler.Instance.isPause) { // Pause game
@@ -40,10 +55,6 @@ public class LevelManager : MonoBehaviour
         reviveCoroutineRunning = true;
         yield return new WaitForSeconds(3f);
         StartCoroutine(BlinkCoroutine());
-        //else {
-        //    GameManager.Instance.isGameOver = true;
-        //    MenuUIHandler.Instance.OnGameOver();
-        //}
     }
 
     private IEnumerator BlinkCoroutine() { // Second Coroutine activate player, shield and blink color every 0.4f
@@ -87,6 +98,16 @@ public class LevelManager : MonoBehaviour
     public void GameOver() {
         GameManager.Instance.isGameOver = true;
         MenuUIHandler.Instance.OnGameOver();
+        //audioSource.Stop();
+        //audioSource.loop = false;
+        //audioSource.clip = loserSound;
+        //audioSource.Play();
+    }
+
+    public void Victory() {
+        GameManager.Instance.isVictory = true;
+        GameManager.Instance.UpdatePointsVictory();
+        MenuUIHandler.Instance.OnVictory();
     }
 
 

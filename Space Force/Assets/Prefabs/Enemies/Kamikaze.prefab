@@ -136,7 +136,7 @@ MonoBehaviour:
   placeholderCenter: {fileID: 0}
   audioSource: {fileID: 0}
   shootingSound: {fileID: 8300000, guid: 187e81d7942d7fe4cad5483b289aee58, type: 3}
-  speed: 5
+  speed: 14
   timeRemaining: 6
 --- !u!82 &7519803552463906029
 AudioSource:

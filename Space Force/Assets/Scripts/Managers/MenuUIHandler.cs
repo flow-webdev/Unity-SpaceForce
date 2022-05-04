@@ -13,20 +13,27 @@ public class MenuUIHandler : MonoBehaviour
     // In button -> Navigation, put None. Otherwise the spacebar will trigger the last canvas used before the actual one
 
     public static MenuUIHandler Instance;
-    public Canvas home;
-    public Canvas quit;
-    public Canvas settings;
-    public Canvas pause;
-    public Canvas gameOver;
+    public Canvas home; // Utilized by GameManager to set it inactive
+    [SerializeField] private Canvas quit;
+    [SerializeField] private Canvas settings;
+    [SerializeField] private Canvas pause;
+    [SerializeField] private Canvas gameOver;
+    [SerializeField] private Canvas victory;
+    [SerializeField] private GameObject pointsVictory;
 
     [SerializeField] private CanvasGroup gameOverCanvasGroup;
+    [SerializeField] private CanvasGroup victoryCanvasGroup;
     [SerializeField] private bool fadeIn = true;
 
     [SerializeField] private LevelManager levelManager;
 
     [SerializeField]  private bool oppositeBool = false;
-    [SerializeField]  private bool mainMenuBool = false;
     public bool isPause = false;
+
+    public bool isMenu = false;
+    public bool isLevel = false;
+    public bool isWin = false;
+    public bool isLose = false;
 
     private void Awake() {
 
@@ -41,6 +48,7 @@ public class MenuUIHandler : MonoBehaviour
 
     private void Start() {
         gameOverCanvasGroup = gameOver.GetComponent<CanvasGroup>();
+        victoryCanvasGroup = victory.GetComponent<CanvasGroup>();
     }
 
     public void StartNew() {
@@ -50,7 +58,10 @@ public class MenuUIHandler : MonoBehaviour
     private IEnumerator StartNewGameCoroutine() {
         yield return new WaitForSeconds(0.5f);
         SceneManager.LoadScene(1);
-        home.gameObject.SetActive(false);
+        isMenu = false;
+        isLevel = true;
+        isWin = false;
+        isLose = false;
     }
 
     public void OnQuit() {
@@ -74,9 +85,12 @@ public class MenuUIHandler : MonoBehaviour
         levelManager.PauseGame();
     }
 
-    public void OnGameOver() {
-        
+    public void OnGameOver() { // Called by LevelManager if lives = 0
         gameOver.gameObject.SetActive(true);
+        isMenu = false;
+        isLevel = false;
+        isWin = false;
+        isLose = true;
 
         if (fadeIn) {
             if (gameOverCanvasGroup.alpha < 1) {
@@ -87,8 +101,47 @@ public class MenuUIHandler : MonoBehaviour
         }
     }
 
-    public void OnMainMenu() {
-        if (GameManager.Instance.isGameOver) { //&& mainMenuBool
+    public void OnVictory() { // Called by LevelManager if GameManager.Instance.isVictory = true
+        victory.gameObject.SetActive(true);
+        isMenu = false;
+        isLevel = false;
+        isWin = true;
+        isLose = false;
+
+        if (fadeIn) {
+            if (victoryCanvasGroup.alpha < 1) {
+                victoryCanvasGroup.alpha += Time.deltaTime;
+            } else if (victoryCanvasGroup.alpha >= 1) {
+                fadeIn = false;
+            }
+        }
+        StartCoroutine(ShowOnPointsVictory());
+    }
+
+    private IEnumerator ShowOnPointsVictory() {
+        yield return new WaitForSeconds(3f);
+        pointsVictory.gameObject.SetActive(true);
+
+        StartCoroutine(StartNextLevelCoroutine());
+    }
+
+    private IEnumerator StartNextLevelCoroutine() {
+        yield return new WaitForSeconds(3f);
+        Scene scene = SceneManager.GetActiveScene();
+
+        if (scene.name == "Level 1") {
+            SceneManager.LoadScene(2);            
+        }
+        victory.gameObject.SetActive(false);
+        GameManager.Instance.isVictory = false;
+        isMenu = false;
+        isLevel = true;
+        isWin = false;
+        isLose = false;
+    }
+
+    public void OnMainMenu() { // Called by button in GameOver canvas
+        if (GameManager.Instance.isGameOver) {
             SceneManager.LoadScene(0);
             fadeIn = true;            
             gameOverCanvasGroup.alpha = 0;            
@@ -96,6 +149,10 @@ public class MenuUIHandler : MonoBehaviour
             home.gameObject.SetActive(true);            
         }
         GameManager.Instance.ResetNewGame();
+        isMenu = true;
+        isLevel = false;
+        isWin = false;
+        isLose = false;
     }
 
     public void OnExitGame() {

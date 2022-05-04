@@ -9,6 +9,7 @@ public class SpawnManager : MonoBehaviour
     public GameObject[] enemies;
     public GameObject runner;
     private Vector3[] enemySpawnCoordinates;
+    private bool superBool = false;
 
     int previousCoordinate = 0;
 
@@ -24,7 +25,7 @@ public class SpawnManager : MonoBehaviour
     private float startDelayRunner = 15f;
     private float runnerRate = 15f;
 
-    void Start() {
+    private void Start() {
 
         InitializeEnemyCoordinates();
 
@@ -32,6 +33,18 @@ public class SpawnManager : MonoBehaviour
         InvokeRepeating("PowerUpSpawn", startDelayPowerup, powerupRate);
         InvokeRepeating("EnemySpawn", startDelayEnemy, enemyRate);
         InvokeRepeating("RunnerSpawn", startDelayRunner, runnerRate);
+    }
+
+    private void Update() {
+        if (GameManager.Instance.isVictory) {
+            CancelInvoke();
+        }
+
+        if (GameManager.Instance.time < 100 && !superBool) {
+            CancelInvoke("EnemySpawn");
+            InvokeRepeating("EnemySpawn", 0f, 1.5f);
+            superBool = true;
+        }
     }
 
     void AsteroidsSpawn() {
