@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     public int bombs = 3;
     public bool isGameOver = false;
     public bool isVictory = false; // Alert EnemyScript and SpawnManager to stop
-    public int time = 150;
+    public int time;
 
     [SerializeField] private Text livesText;
     [SerializeField] private Text bombsText;
@@ -31,30 +31,8 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
         DontDestroyOnLoad(gameObject); // This code enables you to access the MainManager object from any other script. 
-    }
-
-    // Text component is in another scene, so I need to use SceneManager.sceneLoaded to get the reference
-    private void OnEnable() {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }    
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
-        //Debug.Log("Scene name: " + scene.name);
-        //Debug.Log(mode);
-
-        if (scene.name == "Level 1") {
-            livesText = GameObject.Find("Lives").GetComponent<Text>();
-            bombsText = GameObject.Find("Bombs").GetComponent<Text>();
-            pointsText = GameObject.Find("Points").GetComponent<Text>();
-            timeText = GameObject.Find("Time").GetComponent<Text>();
-        }        
-    }
-
-    private void OnDisable() {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     public void ResetNewGame() { // Called by MenuUIHandler if GameOver button is clicked
@@ -65,14 +43,29 @@ public class GameManager : MonoBehaviour
         bombs = 3;
         isGameOver = false;
         isVictory = false;
-        time = 150;
+        time = 140;
+    }
+
+    public void StartLevel() { // Called by UIHandler when start new game or new level        
+        isVictory = false;
+        time = 10;
+
+        // Apparently Coroutine perform better than Invoke/InvokeRepeating
+        StartCoroutine(TimerCoroutine()); //GameManager.Instance.InvokeRepeating("UpdateTime", 1, 1);
+    }
+
+    private IEnumerator TimerCoroutine() {
+        while (time >= 1 && !isGameOver) {
+            yield return new WaitForSeconds(1f);
+            UpdateTime();
+        }
     }
 
     public void UpdateTime() { // Timer called by LevelManager every second
         time -= 1;
-        timeText.text = "TIME : " + time;
+        timeText.text = "TIME : " + time;        
 
-        if (time < 150) {
+        if (time < 140) {
             MenuUIHandler.Instance.home.gameObject.SetActive(false);
         }
     }
@@ -82,8 +75,8 @@ public class GameManager : MonoBehaviour
         pointsText.text = "POINTS : " + points;
     }
 
-    public void UpdatePointsVictory() {
-        pointsTextVictory.text = "POINTS : " + points;
+    public void UpdatePointsVictory() { // Called by levelManager
+        pointsTextVictory.text = "POINTS : " + points;        
     }
 
     public void UpdateLives(int livesToAdd, bool isTrue) {

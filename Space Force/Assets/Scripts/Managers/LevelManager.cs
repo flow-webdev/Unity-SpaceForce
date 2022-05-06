@@ -10,45 +10,43 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] AudioSource audioSource;
     public AudioClip explodeSound;
-    //public AudioClip winnerSound;
-    //public AudioClip loserSound;
 
-    public bool isChangeColor = false; // enchance color change during coroutine
+    public bool isChangeColor = false; // enchance color change of shield during revive coroutine
     private bool reviveCoroutineRunning = false; // Without this bool, coroutine starts every frame    
     private int blinkCounter = 10;
 
     void Start() {
         playerController = FindObjectOfType<PlayerController>(true);
-
-        // Apparently Coroutine perform better than Invoke/InvokeRepeating
-        StartCoroutine(TimerCoroutine()); //GameManager.Instance.InvokeRepeating("UpdateTime", 1, 1);
-    }
-
-    private IEnumerator TimerCoroutine() {
-
-        while (GameManager.Instance.time >= 1) {
-            yield return new WaitForSeconds(1f);
-            GameManager.Instance.UpdateTime();
-        }
     }
 
     void Update() {
 
-        if (GameManager.Instance.lives <= 0) { // GameOver if player has no lives CHIEDERE && !GameManager.Instance.isGameOver
-            GameOver();
+        if (GameManager.Instance.lives <= 0) { // by adding "&& !GameManager.Instance.isGameOver" the gameOver canvas doesn't work.It need to run 
+            GameOver();                        // every frame/second in order to change canvas alpha, otherwise is not changing.
         }
         else if (!playerController.isAlive && !reviveCoroutineRunning && GameManager.Instance.lives > 0) { // Reactivate player if has lives left
             StartCoroutine(ReviveCoroutine());
         }
 
         if (GameManager.Instance.time <= 0 && playerController.isAlive) { // Victory if time is 0
-            Victory();            
+            Victory();
         }
 
         if (Input.GetKeyDown(KeyCode.P) && !MenuUIHandler.Instance.isPause) { // Pause game
             MenuUIHandler.Instance.OnPause();
             PauseGame();
         }
+    }
+
+    public void GameOver() {
+        GameManager.Instance.isGameOver = true;
+        MenuUIHandler.Instance.OnGameOver();
+    }
+
+    public void Victory() {
+        GameManager.Instance.isVictory = true;
+        GameManager.Instance.UpdatePointsVictory();
+        MenuUIHandler.Instance.OnVictory();
     }
 
     private IEnumerator ReviveCoroutine() { // First Coroutine just wait 3 sec
@@ -93,22 +91,7 @@ public class LevelManager : MonoBehaviour
         } else {
             Time.timeScale = 1;
         }
-    }
-
-    public void GameOver() {
-        GameManager.Instance.isGameOver = true;
-        MenuUIHandler.Instance.OnGameOver();
-        //audioSource.Stop();
-        //audioSource.loop = false;
-        //audioSource.clip = loserSound;
-        //audioSource.Play();
-    }
-
-    public void Victory() {
-        GameManager.Instance.isVictory = true;
-        GameManager.Instance.UpdatePointsVictory();
-        MenuUIHandler.Instance.OnVictory();
-    }
+    }    
 
 
 }

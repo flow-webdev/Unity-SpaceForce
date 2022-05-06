@@ -19,6 +19,10 @@ public class MenuUIHandler : MonoBehaviour
     [SerializeField] private Canvas pause;
     [SerializeField] private Canvas gameOver;
     [SerializeField] private Canvas victory;
+    [SerializeField] private Canvas bombText;
+    [SerializeField] private Canvas livesText;
+    [SerializeField] private Canvas pointsText;
+    [SerializeField] private Canvas timeText;
     [SerializeField] private GameObject pointsVictory;
 
     [SerializeField] private CanvasGroup gameOverCanvasGroup;
@@ -30,7 +34,7 @@ public class MenuUIHandler : MonoBehaviour
     [SerializeField]  private bool oppositeBool = false;
     public bool isPause = false;
 
-    public bool isMenu = false;
+    public bool isMenu = false; // These bools help to control the AudioManager
     public bool isLevel = false;
     public bool isWin = false;
     public bool isLose = false;
@@ -55,31 +59,36 @@ public class MenuUIHandler : MonoBehaviour
         StartCoroutine(StartNewGameCoroutine());
     }
 
-    private IEnumerator StartNewGameCoroutine() {
-        yield return new WaitForSeconds(0.5f);
+    private IEnumerator StartNewGameCoroutine() { // Start the game. Called by menu
+        yield return new WaitForSeconds(0.3f);
         SceneManager.LoadScene(1);
+        GameManager.Instance.StartLevel(); // Reset timer Coroutine and isVictory var
+        bombText.gameObject.SetActive(true);
+        livesText.gameObject.SetActive(true);
+        pointsText.gameObject.SetActive(true);
+        timeText.gameObject.SetActive(true);
         isMenu = false;
         isLevel = true;
         isWin = false;
         isLose = false;
     }
 
-    public void OnQuit() {
+    public void OnQuit() { // Called by menu
         oppositeBool = !oppositeBool;
         quit.gameObject.SetActive(oppositeBool);
     }
 
-    public void OnSettings() {
+    public void OnSettings() { // Called by menu
         oppositeBool = !oppositeBool;
         settings.gameObject.SetActive(oppositeBool);
     }
 
-    public void OnPause() {
+    public void OnPause() { // Called by menu
         isPause = true;
         pause.gameObject.SetActive(isPause);
     }
 
-    public void OnResume() {
+    public void OnResume() { // Called by menu
         isPause = false;
         pause.gameObject.SetActive(isPause);
         levelManager.PauseGame();
@@ -118,22 +127,36 @@ public class MenuUIHandler : MonoBehaviour
         StartCoroutine(ShowOnPointsVictory());
     }
 
-    private IEnumerator ShowOnPointsVictory() {
+    private IEnumerator ShowOnPointsVictory() { // Show points canvas on victory
         yield return new WaitForSeconds(3f);
         pointsVictory.gameObject.SetActive(true);
 
         StartCoroutine(StartNextLevelCoroutine());
     }
 
-    private IEnumerator StartNextLevelCoroutine() {
+    private IEnumerator StartNextLevelCoroutine() { // Start new Level
         yield return new WaitForSeconds(3f);
         Scene scene = SceneManager.GetActiveScene();
+        string name = scene.name;
 
-        if (scene.name == "Level 1") {
-            SceneManager.LoadScene(2);            
+        switch (name) {
+            case "Level 1":
+                SceneManager.LoadScene(2);
+                NextLevel();
+                StopAllCoroutines();
+                break;
+            case "Level 2":
+                SceneManager.LoadScene(3);
+                NextLevel();
+                StopAllCoroutines();
+                break;
         }
+    }
+
+    private void NextLevel() {
         victory.gameObject.SetActive(false);
-        GameManager.Instance.isVictory = false;
+        GameManager.Instance.StartLevel(); // Reset timer Coroutine and isVictory var
+        resetFadeIn();
         isMenu = false;
         isLevel = true;
         isWin = false;
@@ -143,16 +166,25 @@ public class MenuUIHandler : MonoBehaviour
     public void OnMainMenu() { // Called by button in GameOver canvas
         if (GameManager.Instance.isGameOver) {
             SceneManager.LoadScene(0);
-            fadeIn = true;            
-            gameOverCanvasGroup.alpha = 0;            
+            resetFadeIn();
             gameOver.gameObject.SetActive(false);
             home.gameObject.SetActive(true);            
         }
         GameManager.Instance.ResetNewGame();
+        bombText.gameObject.SetActive(false);
+        livesText.gameObject.SetActive(false);
+        pointsText.gameObject.SetActive(false);
+        timeText.gameObject.SetActive(false);
         isMenu = true;
         isLevel = false;
         isWin = false;
         isLose = false;
+    }
+
+    private void resetFadeIn() {
+        fadeIn = true;
+        gameOverCanvasGroup.alpha = 0;
+        pointsVictory.gameObject.SetActive(false);
     }
 
     public void OnExitGame() {
