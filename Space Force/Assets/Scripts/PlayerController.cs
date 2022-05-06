@@ -164,6 +164,14 @@ public class PlayerController : MonoBehaviour
             } else {
                 GameManager.Instance.UpdateScore(1000);
             }            
+        
+        } else if (other.gameObject.CompareTag("Mine") && !isShieldActive) {
+            Destroy(other.gameObject);
+            EliminatePlayer();
+        
+        } else if (other.gameObject.CompareTag("Mine") && isShieldActive) {
+            Destroy(other.gameObject);
+            Instantiate(baseExplosion, transform.position, baseExplosion.transform.rotation);
         }
     }    
 

@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour
 
     public void StartLevel() { // Called by UIHandler when start new game or new level        
         isVictory = false;
-        time = 10;
+        time = 140;
 
         // Apparently Coroutine perform better than Invoke/InvokeRepeating
         StartCoroutine(TimerCoroutine()); //GameManager.Instance.InvokeRepeating("UpdateTime", 1, 1);

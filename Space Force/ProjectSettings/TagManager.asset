@@ -20,6 +20,7 @@ TagManager:
   - Shield
   - Projectile Laser
   - Pause
+  - Mine
   layers:
   - Default
   - TransparentFX
