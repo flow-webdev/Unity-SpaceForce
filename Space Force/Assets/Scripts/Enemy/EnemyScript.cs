@@ -85,7 +85,7 @@ public abstract class EnemyScript : MonoBehaviour {
         if (this.gameObject.name == "Shooter(Clone)" || this.gameObject.name == "Kamikaze(Clone)") {
             GameManager.Instance.UpdateScore(100);
         } else {
-            GameManager.Instance.UpdateScore(100);
+            GameManager.Instance.UpdateScore(200);
         }
     }
     protected abstract void Movement();
