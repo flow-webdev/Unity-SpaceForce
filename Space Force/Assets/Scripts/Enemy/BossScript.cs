@@ -9,8 +9,10 @@ public class BossScript : EnemyScript {
     private float timeLimit = 0.7f;
 
     [SerializeField] private int projectileCount = 0;
-    private bool bombboolean = false;
-    private int shootCounter = 0;
+    [SerializeField] private bool bombboolean = false;
+    [SerializeField] private int shootCounter = 0;
+    Vector3 newPosition;
+    float playerxPosition;
 
     protected override void Start() {
         base.Start();
@@ -39,6 +41,22 @@ public class BossScript : EnemyScript {
         base.FixedUpdate();
     }
 
+    protected override void OnTriggerEnter(Collider other) {
+
+        if (other.gameObject.CompareTag("Projectile")) {
+            projectileCount++;
+            if (projectileCount >= 40) {
+                Explode();
+            }
+
+        } else if (other.gameObject.CompareTag("Projectile Laser")) {
+            projectileCount += 2;
+            if (projectileCount >= 40) {
+                Explode();
+            }
+        }
+    }
+
     protected override void Shoot() {
 
         if (projectileCount < 20) {
@@ -54,43 +72,29 @@ public class BossScript : EnemyScript {
 
     protected override void Movement() {
 
-        float step = speed * Time.deltaTime;
+        float step = speed * Time.deltaTime;        
 
         if (timeRemaining > 3) {
             timeRemaining -= Time.deltaTime;
             transform.Translate(Vector3.forward * step);
+        
         } else {
-            timeRemaining -= Time.deltaTime;
-            //StartCoroutine(ShootingCoroutine());
+            
+            playerxPosition = player.transform.position.x;
+            newPosition = new Vector3(playerxPosition, transform.position.y, transform.position.z);
+            transform.position = Vector3.MoveTowards(transform.position, newPosition, step);
             ShootingTime();
         }
     }
 
-    private IEnumerator ShootingCoroutine() {
-        while(shootCounter < 3) {
-            elapsedTime += Time.deltaTime;
-            if (elapsedTime >= timeLimit) {
-                elapsedTime = 0;
-                Shoot();
-                shootCounter++;
-            }
-            Debug.Log(shootCounter);
-            yield return new WaitForSeconds(2f);
-            
-        }
-        yield return new WaitForSeconds(2f);
-    }
-
     private void ShootingTime() {
-        if (shootCounter < 3) {
-            elapsedTime += Time.deltaTime;
-            if (elapsedTime >= timeLimit) {
-                elapsedTime = 0;
-                Shoot();
-                shootCounter++;
-                Debug.Log(shootCounter);
-            }
-        }            
+        elapsedTime += Time.deltaTime;
+        if (elapsedTime >= timeLimit) {
+            elapsedTime = 0;
+            Shoot();
+            shootCounter++;
+        }
     }
 
 }
+

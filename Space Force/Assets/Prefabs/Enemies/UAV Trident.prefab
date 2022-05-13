@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8655599968108932352}
   m_Layer: 0
   m_Name: UAV Trident
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -62,8 +62,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.7029853, y: 0.3644817, z: 1.7864101}
-  m_Center: {x: 0.02877295, y: -0.03049934, z: -0.3932054}
+  m_Size: {x: 1.7029853, y: 0.29642856, z: 1.4710002}
+  m_Center: {x: 0.028772969, y: 0.003527301, z: 0.37955776}
 --- !u!114 &7469840752611623704
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85,9 +85,12 @@ MonoBehaviour:
   placeholderCenter: {fileID: 0}
   audioSource: {fileID: 0}
   shootingSound: {fileID: 8300000, guid: ad556ed736d5a1d40ba61b523419df00, type: 3}
-  speed: 5
+  speed: 8
   timeRemaining: 6
   enemyProjectile: {fileID: 5716227524402863762, guid: b3f516890d8472c448b0ee6aa6e04463, type: 3}
+  projectileCount: 0
+  bombboolean: 0
+  shootCounter: 0
 --- !u!82 &8655599968108932352
 AudioSource:
   m_ObjectHideFlags: 0

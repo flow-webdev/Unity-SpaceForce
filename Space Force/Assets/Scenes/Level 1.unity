@@ -1689,6 +1689,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UAV Trident
       objectReference: {fileID: 0}
+    - target: {fileID: 446495513978816020, guid: 9ae5b70103c9bd44d813397b9c734972, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 446495513978997370, guid: 9ae5b70103c9bd44d813397b9c734972, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -1703,7 +1707,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 446495513978997370, guid: 9ae5b70103c9bd44d813397b9c734972, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 34
+      value: 42
       objectReference: {fileID: 0}
     - target: {fileID: 446495513978997370, guid: 9ae5b70103c9bd44d813397b9c734972, type: 3}
       propertyPath: m_LocalRotation.w

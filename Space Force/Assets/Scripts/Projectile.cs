@@ -26,16 +26,15 @@ public class Projectile : MonoBehaviour
 
     public virtual void Movement() {
        
-        transform.Translate(Vector3.forward * speed * Time.deltaTime);
-        //objectRb.AddForce(Vector3.forward.normalized * speed, ForceMode.Impulse);        
+        transform.Translate(Vector3.forward * speed * Time.deltaTime);       
     }
 
     public virtual void OnTriggerEnter(Collider other) {        
         // TO RETURN TO POOL
         if (other.gameObject.CompareTag("Asteroid") || other.gameObject.CompareTag("Enemy")) {
-            //Destroy(other.gameObject);
             if (this.gameObject.tag == "Projectile") {
                 ReturnToPool();
+                //gameObject.transform
             } else if (this.gameObject.tag == "Projectile Laser") {
                 ReturnToPoolLaser();
             }
