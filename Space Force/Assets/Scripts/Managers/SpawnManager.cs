@@ -41,7 +41,7 @@ public class SpawnManager : MonoBehaviour
         InitializeEnemyCoordinates();
         Scene scene = SceneManager.GetActiveScene();
         sceneName = scene.name;
-        Debug.Log("Scene Name: " + sceneName);
+        //Debug.Log("Scene Name: " + sceneName);
 
         InvokeRepeating("PowerUpSpawn", startDelayPowerup, powerupRate);        
         
@@ -49,8 +49,12 @@ public class SpawnManager : MonoBehaviour
         if (sceneName == "Level 1") {
             InvokeRepeating("EnemySpawn", startDelayEnemy, enemyRateLevelOne);
             InvokeRepeating("RunnerSpawn", startDelayGiant, giantRate);
-        } else {
+        } else if (sceneName == "Level 2") {
             InvokeRepeating("EnemySpawn", startDelayEnemy, enemyRate);
+            InvokeRepeating("RunnerSpawn", startDelayRunner, runnerRate + 2f);
+            InvokeRepeating("GiantSpawn", startDelayGiant, giantRate + 2f);
+        } else {
+            InvokeRepeating("EnemySpawn", startDelayEnemy, enemyRate - 0.3f);
             InvokeRepeating("RunnerSpawn", startDelayRunner, runnerRate);
             InvokeRepeating("GiantSpawn", startDelayGiant, giantRate);
         }
@@ -68,7 +72,7 @@ public class SpawnManager : MonoBehaviour
             superBool = true;
         }
 
-        if (GameManager.Instance.time < 20 && !isGiantLevelOne && sceneName == "Level 1") {
+        if (GameManager.Instance.time < 15 && !isGiantLevelOne && sceneName == "Level 1") {
             Instantiate(giant, new Vector3(0, 10, 34), giant.transform.rotation);
             isGiantLevelOne = true;
         }

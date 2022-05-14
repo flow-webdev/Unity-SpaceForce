@@ -19,12 +19,13 @@ public class PlayerController : MonoBehaviour
     public bool isAlive = true;
     public bool isBombing = false;
     public bool isShieldActive = false;
+    private bool isBombCooldown = true;
 
     // Powerup affected abilities
     public float speed;      
 
     // Boundaries
-    private float rightLeftBound = 30f;
+    private float rightLeftBound = 25f;
     private float bottomBound = 8.5f;
     private float topBound = 12f;    
 
@@ -47,8 +48,9 @@ public class PlayerController : MonoBehaviour
             Shoot();            
         }
 
-        if (Input.GetKeyDown(KeyCode.L) && !MenuUIHandler.Instance.isPause) { // Release bomb
-            StartBombing();            
+        if (Input.GetKeyDown(KeyCode.L) && !MenuUIHandler.Instance.isPause && isBombCooldown) { // Release bomb
+            StartBombing();
+            isBombCooldown = false;
         }
 
         //if (Input.GetKeyDown(KeyCode.Space) && !MenuUIHandler.Instance.isPause) { // Suicide button for tests and bug fixes
@@ -234,8 +236,14 @@ public class PlayerController : MonoBehaviour
             Instantiate(bombExplosion, transform.position, bombExplosion.transform.rotation);
             StartCoroutine(EnemyExplosion());
             StartCoroutine(StopBombing());
+            StartCoroutine(BombCooldownCoroutine());
             GameManager.Instance.UpdateBombs(1, false);
         }
+    }
+
+    private IEnumerator BombCooldownCoroutine() {
+        yield return new WaitForSeconds(3f);
+        isBombCooldown = true;
     }
 
     // Checked by enemy, if true they explode
