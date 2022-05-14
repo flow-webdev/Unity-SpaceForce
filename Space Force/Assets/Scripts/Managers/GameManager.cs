@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     public int points = 0;
     public int powerupCount = 0;
     public int bombs = 3;
+    public bool isLaser = false;
     public bool isGameOver = false;
     public bool isVictory = false; // Alert EnemyScript and SpawnManager to stop
     public int time;
@@ -48,7 +49,7 @@ public class GameManager : MonoBehaviour
 
     public void StartLevel() { // Called by UIHandler when start new game or new level        
         isVictory = false;
-        time = 140;
+        time = 140;//////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // Apparently Coroutine perform better than Invoke/InvokeRepeating
         StartCoroutine(TimerCoroutine()); //GameManager.Instance.InvokeRepeating("UpdateTime", 1, 1);

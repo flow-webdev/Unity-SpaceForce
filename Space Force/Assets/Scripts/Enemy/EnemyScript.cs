@@ -4,6 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))] 
 public abstract class EnemyScript : MonoBehaviour {
+
     public PlayerController playerController;
     public GameObject player;
     public GameObject baseExplosion;

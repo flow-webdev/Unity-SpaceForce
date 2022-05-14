@@ -6,6 +6,7 @@ public class LevelManager : MonoBehaviour
 {
 
     private PlayerController playerController;
+    private SpawnManager spawnManager;
     public Material white, red;
 
     [SerializeField] AudioSource audioSource;
@@ -17,6 +18,7 @@ public class LevelManager : MonoBehaviour
 
     void Start() {
         playerController = FindObjectOfType<PlayerController>(true);
+        spawnManager = FindObjectOfType<SpawnManager>(true);
     }
 
     void Update() {
@@ -28,7 +30,7 @@ public class LevelManager : MonoBehaviour
             StartCoroutine(ReviveCoroutine());
         }
 
-        if (GameManager.Instance.time <= 0 && playerController.isAlive) { // Victory if time is 0
+        if (GameManager.Instance.time <= 0 && playerController.isAlive && spawnManager.sceneName != "Level 3") { // Victory if time is 0 and is not last level or called by BossScript
             Victory();
         }
 
@@ -47,6 +49,15 @@ public class LevelManager : MonoBehaviour
         GameManager.Instance.isVictory = true;
         GameManager.Instance.UpdatePointsVictory();
         MenuUIHandler.Instance.OnVictory();
+    }
+
+    public void LastVictory() {
+        StartCoroutine(LastVictoryCoroutine());
+    }
+
+    private IEnumerator LastVictoryCoroutine() {
+        yield return new WaitForSeconds(2f);
+        Victory();
     }
 
     private IEnumerator ReviveCoroutine() { // First Coroutine just wait 3 sec

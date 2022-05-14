@@ -19,7 +19,6 @@ public class PlayerController : MonoBehaviour
     public bool isAlive = true;
     public bool isBombing = false;
     public bool isShieldActive = false;
-    private bool isLaser = false;
 
     // Powerup affected abilities
     public float speed;      
@@ -52,9 +51,9 @@ public class PlayerController : MonoBehaviour
             StartBombing();            
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && !MenuUIHandler.Instance.isPause) {
-            EliminatePlayer();
-        }
+        //if (Input.GetKeyDown(KeyCode.Space) && !MenuUIHandler.Instance.isPause) { // Suicide button for tests and bug fixes
+        //    EliminatePlayer();
+        //}
     }
 
     // Call before perform any physics calculation (physics code goes here)
@@ -68,7 +67,7 @@ public class PlayerController : MonoBehaviour
         levelManager.PlayExplosionAudio();
         isAlive = false;
         GameManager.Instance.powerupCount = 0;
-        isLaser = false;
+        GameManager.Instance.isLaser = false;
         speed = 15f;
         GameManager.Instance.bombs = 0;
         GameManager.Instance.UpdateBombs(3, true);
@@ -123,7 +122,7 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag("Powerup Multi")) {
             Destroy(other.gameObject);
             audioSource.PlayOneShot(coinSound);            
-            if(isLaser && GameManager.Instance.powerupCount == 1 || !isLaser && GameManager.Instance.powerupCount == 2) {
+            if(GameManager.Instance.isLaser && GameManager.Instance.powerupCount == 1 || !GameManager.Instance.isLaser && GameManager.Instance.powerupCount == 2) {
                 GameManager.Instance.UpdateScore(1000);
             } else {
                 GameManager.Instance.powerupCount += 1;
@@ -158,9 +157,11 @@ public class PlayerController : MonoBehaviour
         } else if (other.gameObject.CompareTag("Powerup Laser")) {
             Destroy(other.gameObject);
             audioSource.PlayOneShot(coinSound);
-            if (!isLaser) {
-                isLaser = true;
+            if (!GameManager.Instance.isLaser) {
+                GameManager.Instance.isLaser = true;
                 GameManager.Instance.powerupCount = 0;
+            } else if (GameManager.Instance.isLaser && GameManager.Instance.powerupCount == 0) {
+                GameManager.Instance.powerupCount++;
             } else {
                 GameManager.Instance.UpdateScore(1000);
             }            
@@ -177,7 +178,7 @@ public class PlayerController : MonoBehaviour
 
     void Shoot() {
 
-        if (!isLaser) {
+        if (!GameManager.Instance.isLaser) {
             audioSource.PlayOneShot(rocketSound);            
             switch (GameManager.Instance.powerupCount) {
 

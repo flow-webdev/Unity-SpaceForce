@@ -34,7 +34,6 @@ public class Projectile : MonoBehaviour
         if (other.gameObject.CompareTag("Asteroid") || other.gameObject.CompareTag("Enemy")) {
             if (this.gameObject.tag == "Projectile") {
                 ReturnToPool();
-                //gameObject.transform
             } else if (this.gameObject.tag == "Projectile Laser") {
                 ReturnToPoolLaser();
             }

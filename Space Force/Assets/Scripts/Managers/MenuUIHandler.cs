@@ -24,6 +24,8 @@ public class MenuUIHandler : MonoBehaviour
     [SerializeField] private Canvas pointsText;
     [SerializeField] private Canvas timeText;
     [SerializeField] private GameObject pointsVictory;
+    [SerializeField] private GameObject lastVictoryButton;
+    [SerializeField] private GameObject victoryBadge;
 
     [SerializeField] private CanvasGroup gameOverCanvasGroup;
     [SerializeField] private CanvasGroup victoryCanvasGroup;
@@ -32,6 +34,7 @@ public class MenuUIHandler : MonoBehaviour
     [SerializeField] private LevelManager levelManager;
 
     [SerializeField]  private bool oppositeBool = false;
+    private string sceneName;
     public bool isPause = false;
 
     public bool isMenu = false; // These bools help to control the AudioManager
@@ -52,7 +55,7 @@ public class MenuUIHandler : MonoBehaviour
 
     private void Start() {
         gameOverCanvasGroup = gameOver.GetComponent<CanvasGroup>();
-        victoryCanvasGroup = victory.GetComponent<CanvasGroup>();
+        victoryCanvasGroup = victory.GetComponent<CanvasGroup>();        
     }
 
     public void StartNew() {
@@ -131,15 +134,29 @@ public class MenuUIHandler : MonoBehaviour
         yield return new WaitForSeconds(3f);
         pointsVictory.gameObject.SetActive(true);
 
-        StartCoroutine(StartNextLevelCoroutine());
+        Scene scene = SceneManager.GetActiveScene();
+        sceneName = scene.name;
+
+        if (sceneName != "Level 3") {
+            StartCoroutine(StartNextLevelCoroutine());
+        } else {
+            StartCoroutine(VictoryButtonRoutine());
+        }
+        
+    }
+
+    private IEnumerator VictoryButtonRoutine() {
+        yield return new WaitForSeconds(2f);
+        lastVictoryButton.gameObject.SetActive(true);
+        victoryBadge.gameObject.SetActive(true);
     }
 
     private IEnumerator StartNextLevelCoroutine() { // Start new Level
         yield return new WaitForSeconds(3f);
         Scene scene = SceneManager.GetActiveScene();
-        string name = scene.name;
+        sceneName = scene.name;
 
-        switch (name) {
+        switch (sceneName) {
             case "Level 1":
                 SceneManager.LoadScene(2);
                 NextLevel();
@@ -164,12 +181,15 @@ public class MenuUIHandler : MonoBehaviour
     }
 
     public void OnMainMenu() { // Called by button in GameOver canvas
-        if (GameManager.Instance.isGameOver) {
-            SceneManager.LoadScene(0);
-            resetFadeIn();
-            gameOver.gameObject.SetActive(false);
-            home.gameObject.SetActive(true);            
-        }
+        
+        SceneManager.LoadScene(0);
+        resetFadeIn();
+        gameOver.gameObject.SetActive(false);
+        lastVictoryButton.gameObject.SetActive(false);
+        victoryBadge.gameObject.SetActive(false);
+        victory.gameObject.SetActive(false);
+        home.gameObject.SetActive(true);
+
         GameManager.Instance.ResetNewGame();
         bombText.gameObject.SetActive(false);
         livesText.gameObject.SetActive(false);

@@ -280,7 +280,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e3cc8cf561b2084abd44817d5ae8a99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
+  speed: 15
   levelOneMaterial: {fileID: 2100000, guid: 357535dc907cd344f8ac1ce78cec8d7b, type: 2}
   levelTwoMaterial: {fileID: 2100000, guid: e3284d6faed6cb14092a6149d4358604, type: 2}
   levelThreeMaterial: {fileID: 2100000, guid: cc9d1663506d8cb4abe731496a82b662, type: 2}
@@ -445,7 +445,11 @@ MonoBehaviour:
   enemies:
   - {fileID: 8284052316124348592, guid: 55c2902627853dc499225a09e5008dec, type: 3}
   - {fileID: 509539408336037092, guid: b2dcef4b84c9673408614421072b6358, type: 3}
+  - {fileID: 990652597182797723, guid: 1959cb6c413f26e4a822f787f7c94858, type: 3}
   runner: {fileID: 1511781456190422823, guid: abc79f268788f594dafc38f241562c8b, type: 3}
+  giant: {fileID: 4123150366031681284, guid: e3d45b7ef0de32f438fd87518786509d, type: 3}
+  boss: {fileID: 0}
+  sceneName: 
 --- !u!4 &562730975
 Transform:
   m_ObjectHideFlags: 0

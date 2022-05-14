@@ -32,9 +32,6 @@ public class BossScript : EnemyScript {
     private IEnumerator ChangeBoolean() {
         yield return new WaitForSeconds(0.2f);
         bombboolean = false;
-        if (projectileCount >= 40) {
-            Explode();
-        }
     }
 
     protected override void FixedUpdate() {
@@ -46,16 +43,18 @@ public class BossScript : EnemyScript {
         if (other.gameObject.CompareTag("Projectile")) {
             projectileCount++;
             if (projectileCount >= 40) {
-                Explode();
+                levelManager.LastVictory();
+                Explode();                
             }
 
         } else if (other.gameObject.CompareTag("Projectile Laser")) {
             projectileCount += 2;
             if (projectileCount >= 40) {
+                levelManager.LastVictory();
                 Explode();
             }
         }
-    }
+    }    
 
     protected override void Shoot() {
 

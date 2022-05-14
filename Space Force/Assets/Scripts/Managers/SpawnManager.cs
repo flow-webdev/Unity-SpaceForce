@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SpawnManager : MonoBehaviour
 {
@@ -8,31 +9,52 @@ public class SpawnManager : MonoBehaviour
     public GameObject[] powerUps;
     public GameObject[] enemies;
     public GameObject runner;
+    public GameObject giant;
+    public GameObject boss;
     private Vector3[] enemySpawnCoordinates;
     private bool superBool = false;
+    private bool isGiantLevelOne = false;
+    private bool isFinalBoss = false;
 
-    int previousCoordinate = 0;
+    int previousCoordinate;
 
     private float spawnPosY = 10f;
     private float spawnPosZ = 25f;
 
     private float startDelayEnemy = 2f;
-    private float enemyRate = 3f;
+    private float enemyRateLevelOne = 3f;
+    private float enemyRate = 1.5f;
 
     private float startDelayPowerup = 15f;    
     private float powerupRate = 30f;
 
-    private float startDelayRunner = 15f;
-    private float runnerRate = 15f;
+    private float startDelayRunner = 10f;
+    private float runnerRate = 10f;
+
+    private float startDelayGiant = 15f;
+    private float giantRate = 15f;
+
+    public string sceneName;
 
     private void Start() {
 
         InitializeEnemyCoordinates();
+        Scene scene = SceneManager.GetActiveScene();
+        sceneName = scene.name;
+        Debug.Log("Scene Name: " + sceneName);
 
-        //InvokeRepeating("AsteroidsSpawn", startDelayAsteroid, asteroidsRate);
-        InvokeRepeating("PowerUpSpawn", startDelayPowerup, powerupRate);
-        InvokeRepeating("EnemySpawn", startDelayEnemy, enemyRate);
-        InvokeRepeating("RunnerSpawn", startDelayRunner, runnerRate);
+        InvokeRepeating("PowerUpSpawn", startDelayPowerup, powerupRate);        
+        
+
+        if (sceneName == "Level 1") {
+            InvokeRepeating("EnemySpawn", startDelayEnemy, enemyRateLevelOne);
+            InvokeRepeating("RunnerSpawn", startDelayGiant, giantRate);
+        } else {
+            InvokeRepeating("EnemySpawn", startDelayEnemy, enemyRate);
+            InvokeRepeating("RunnerSpawn", startDelayRunner, runnerRate);
+            InvokeRepeating("GiantSpawn", startDelayGiant, giantRate);
+        }
+        
     }
 
     private void Update() {
@@ -40,10 +62,21 @@ public class SpawnManager : MonoBehaviour
             CancelInvoke();
         }
 
-        if (GameManager.Instance.time < 100 && !superBool) {
+        if (GameManager.Instance.time < 100 && !superBool && sceneName == "Level 1") {
             CancelInvoke("EnemySpawn");
             InvokeRepeating("EnemySpawn", 0f, 1.5f);
             superBool = true;
+        }
+
+        if (GameManager.Instance.time < 20 && !isGiantLevelOne && sceneName == "Level 1") {
+            Instantiate(giant, new Vector3(0, 10, 34), giant.transform.rotation);
+            isGiantLevelOne = true;
+        }
+
+        if (sceneName == "Level 3" && !isFinalBoss && GameManager.Instance.time <= 0) {
+            CancelInvoke();
+            isFinalBoss = true;
+            Instantiate(boss, new Vector3(0, 10, 43), boss.transform.rotation);
         }
     }
 
@@ -58,7 +91,6 @@ public class SpawnManager : MonoBehaviour
     }
 
     Vector3 RandomVector() {
-
         float randomX = Random.Range(-spawnPosY, spawnPosY);
         return new Vector3(randomX, spawnPosY, spawnPosZ);
     }
@@ -74,16 +106,15 @@ public class SpawnManager : MonoBehaviour
     }    
 
     void InitializeEnemyCoordinates() {
-        enemySpawnCoordinates = new Vector3[9];
+        enemySpawnCoordinates = new Vector3[8];
         enemySpawnCoordinates[0] = new Vector3(-20, 10, 34);
         enemySpawnCoordinates[1] = new Vector3(-15, 10, 34);
         enemySpawnCoordinates[2] = new Vector3(-10, 10, 34);
         enemySpawnCoordinates[3] = new Vector3(-5, 10, 34);
-        enemySpawnCoordinates[4] = new Vector3(0, 10, 34);
-        enemySpawnCoordinates[5] = new Vector3(5, 10, 34);
-        enemySpawnCoordinates[6] = new Vector3(10, 10, 34);
-        enemySpawnCoordinates[7] = new Vector3(15, 10, 34);
-        enemySpawnCoordinates[8] = new Vector3(20, 10, 34);
+        enemySpawnCoordinates[4] = new Vector3(5, 10, 34);
+        enemySpawnCoordinates[5] = new Vector3(10, 10, 34);
+        enemySpawnCoordinates[6] = new Vector3(15, 10, 34);
+        enemySpawnCoordinates[7] = new Vector3(20, 10, 34);
     }
 
     int ReturnCoordinates(int coordinate) {
@@ -95,6 +126,12 @@ public class SpawnManager : MonoBehaviour
         }
 
         return coordinatesIndex;
+    }
+
+    void GiantSpawn() {
+
+        Vector3 spawnPoint = new Vector3(0, 10, 34);
+        Instantiate(giant, spawnPoint, giant.transform.rotation);
     }
 
     void RunnerSpawn() {
